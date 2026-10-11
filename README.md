@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Student Study Planner
+
+A web application for students to organize study tasks, track completion, and stay on top of their academic goals.
+
+## Current Features
+
+- Add new study tasks
+- Mark tasks as completed
+- Delete tasks
+- View total and completed task counts
+- Save tasks in browser local storage so they remain after refreshing the page
+
+## Tech Stack
+
+- **Next.js** — React framework
+- **React** — User interface
+- **TypeScript** — Type-safe JavaScript
+- **Tailwind CSS** — Styling
+- **Local Storage** — Browser-based task persistence
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+Install Node.js and npm.
+
+### Installation
+
+Clone the repository:
+
+```bash
+git clone https://github.com/mdmoinsk/-study-planner.git
+cd -study-planner
+```
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Status
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+This project is actively being developed as a learning project. More features will be added as development progresses.
 
-## Learn More
+## Future Improvements
 
-To learn more about Next.js, take a look at the following resources:
+- Organize tasks by subject
+- Add deadlines and priorities
+- Track daily study progress
+- Add a database and user authentication
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## License
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+No license has been added yet.
