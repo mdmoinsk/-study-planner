@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Task = {
   id: number;
@@ -8,30 +8,72 @@ type Task = {
   completed: boolean;
 };
 
-export default function Home() {
-  const [tasks, setTasks] = useState<Task[]>([
-    { id: 1, title: "Revise Computer Networks", completed: false },
-    { id: 2, title: "Practice JavaScript", completed: false },
-  ]);
+const DEFAULT_TASKS: Task[] = [
+  { id: 1, title: "Revise Computer Networks", completed: false },
+  { id: 2, title: "Practice JavaScript", completed: false },
+];
 
+export default function Home() {
+  const [tasks, setTasks] = useState<Task[]>(DEFAULT_TASKS);
   const [newTask, setNewTask] = useState("");
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Load saved tasks from the browser
+  useEffect(() => {
+    try {
+      const savedTasks = localStorage.getItem("studyTasks");
+
+      if (savedTasks !== null) {
+        const parsedTasks: unknown = JSON.parse(savedTasks);
+
+        if (
+          Array.isArray(parsedTasks) &&
+          parsedTasks.every(
+            (task) =>
+              typeof task.id === "number" &&
+              typeof task.title === "string" &&
+              typeof task.completed === "boolean"
+          )
+        ) {
+          setTasks(parsedTasks as Task[]);
+        }
+      }
+    } catch (error) {
+      console.error("Unable to load saved tasks:", error);
+    } finally {
+      setIsLoaded(true);
+    }
+  }, []);
+
+  // Save tasks after loading is complete
+  useEffect(() => {
+    if (!isLoaded) return;
+
+    try {
+      localStorage.setItem("studyTasks", JSON.stringify(tasks));
+    } catch (error) {
+      console.error("Unable to save tasks:", error);
+    }
+  }, [tasks, isLoaded]);
 
   function addTask() {
-    if (newTask.trim() === "") return;
+    const title = newTask.trim();
+
+    if (!title) return;
 
     const task: Task = {
       id: Date.now(),
-      title: newTask.trim(),
+      title,
       completed: false,
     };
 
-    setTasks([...tasks, task]);
+    setTasks((currentTasks) => [...currentTasks, task]);
     setNewTask("");
   }
 
   function toggleTask(id: number) {
-    setTasks(
-      tasks.map((task) =>
+    setTasks((currentTasks) =>
+      currentTasks.map((task) =>
         task.id === id
           ? { ...task, completed: !task.completed }
           : task
@@ -40,7 +82,9 @@ export default function Home() {
   }
 
   function deleteTask(id: number) {
-    setTasks(tasks.filter((task) => task.id !== id));
+    setTasks((currentTasks) =>
+      currentTasks.filter((task) => task.id !== id)
+    );
   }
 
   const completedCount = tasks.filter(
@@ -51,7 +95,7 @@ export default function Home() {
     <main className="min-h-screen bg-slate-100 p-6 text-slate-900">
       <div className="mx-auto max-w-3xl">
         <header className="mb-8">
-          <p className="text-sm font-semibold uppercase text-blue-600">
+          <p className="text-sm font-semibold uppercase tracking-wider text-blue-600">
             Student Workspace
           </p>
 
@@ -93,7 +137,7 @@ export default function Home() {
               value={newTask}
               onChange={(event) => setNewTask(event.target.value)}
               placeholder="Enter a study task..."
-              className="min-w-0 flex-1 rounded-lg border border-slate-300 px-4 py-3"
+              className="min-w-0 flex-1 rounded-lg border border-slate-300 px-4 py-3 outline-none focus:border-blue-500"
             />
 
             <button
@@ -114,12 +158,15 @@ export default function Home() {
                   type="checkbox"
                   checked={task.completed}
                   onChange={() => toggleTask(task.id)}
-                  className="h-5 w-5"
+                  aria-label={`Mark ${task.title} as completed`}
+                  className="h-5 w-5 accent-blue-600"
                 />
 
                 <span
-                  className={`flex-1 ${
-                    task.completed ? "text-slate-400 line-through" : ""
+                  className={`flex-1 break-words ${
+                    task.completed
+                      ? "text-slate-400 line-through"
+                      : ""
                   }`}
                 >
                   {task.title}
@@ -128,7 +175,8 @@ export default function Home() {
                 <button
                   type="button"
                   onClick={() => deleteTask(task.id)}
-                  className="text-sm font-medium text-red-600"
+                  aria-label={`Delete ${task.title}`}
+                  className="text-sm font-medium text-red-600 hover:text-red-800"
                 >
                   Delete
                 </button>
