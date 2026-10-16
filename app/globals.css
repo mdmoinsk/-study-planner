@@ -1,8 +1,18 @@
+
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: light;
+  --background: #f7f8fc;
+  --foreground: #171a2b;
+  --muted: #777c91;
+  --surface: #ffffff;
+  --border: #e8eaf2;
+  --primary: #6658f5;
+  --primary-dark: #5143dc;
+  --lime: #c8f169;
+  --coral: #ffad91;
+  --font-sans: Arial, Helvetica, sans-serif;
 }
 
 @theme inline {
@@ -12,15 +22,110 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--background);
 }
 
 body {
-  background: var(--background);
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(
+      ellipse at 10% 0%,
+      rgba(102, 88, 245, 0.07),
+      transparent 35%
+    ),
+    var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(102, 88, 245, 0.45);
+  outline-offset: 3px;
+}
+
+::selection {
+  color: #171a2b;
+  background: rgba(200, 241, 105, 0.8);
+}
+
+::placeholder {
+  color: #969aab;
+  opacity: 1;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  transition:
+    background-color 180ms ease,
+    border-color 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes progress-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.animate-rise-in {
+  animation: rise-in 550ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.animate-progress-fill {
+  transform-origin: left;
+  animation: progress-fill 900ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
