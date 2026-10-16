@@ -47,9 +47,9 @@ const SUBJECTS = [
 ];
 
 const priorityStyles: Record<Priority, string> = {
-  Low: "bg-emerald-50 text-emerald-700 ring-emerald-600/20",
-  Medium: "bg-amber-50 text-amber-700 ring-amber-600/20",
-  High: "bg-rose-50 text-rose-700 ring-rose-600/20",
+  Low: "bg-emerald-400/10 text-emerald-300 ring-emerald-400/20",
+  Medium: "bg-amber-400/10 text-amber-300 ring-amber-400/20",
+  High: "bg-rose-400/10 text-rose-300 ring-rose-400/20",
 };
 
 function getLocalDate() {
@@ -498,23 +498,23 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
     );
 }
   return (
-    <main className="min-h-screen bg-slate-50 text-slate-900">
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-        <header className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <main className="min-h-screen bg-[#080d1b] text-slate-100">
+      <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
+        <header className="mb-8 flex flex-col gap-5 rounded-3xl border border-white/10 bg-gradient-to-r from-violet-500/10 via-slate-900/80 to-cyan-500/5 p-6 shadow-2xl shadow-black/20 sm:flex-row sm:items-center sm:justify-between sm:p-8">
           <div>
-            <p className="text-sm font-bold uppercase tracking-[0.2em] text-indigo-600">
-              STUDENT WORKSPACE
+            <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.24em] text-violet-300">
+              ✦ STUDENT WORKSPACE
             </p>
-            <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">
-              My Study Planner<span className="text-indigo-600">.</span>
+            <h1 className="mt-3 text-3xl font-black tracking-tight sm:text-5xl">
+              My Study Planner<span className="text-violet-300">.</span>
             </h1>
             <p className="mt-2 text-slate-500">
               Organize your subjects. Prioritize your work. Track your progress.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+          <div className="rounded-2xl border border-white/10 bg-slate-900/80 px-5 py-4 shadow-xl shadow-black/20 backdrop-blur-xl">
+            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
               TODAY
             </p>
             <p className="mt-1 font-bold">
@@ -523,14 +523,14 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
           </div>
         </header>
 
-        <section className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <section className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <StatCard label="Total tasks" value={tasks.length} detail="All study tasks" />
           <StatCard label="Completed" value={completedCount} detail={`${progress}% overall progress`} />
           <StatCard label="Pending" value={pendingCount} detail="Still to work on" />
           <StatCard label="Overdue" value={overdueCount} detail="Past deadline" />
         </section>
 
-        <section className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <section className="mb-6 rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900/95 to-slate-900/60 p-5 shadow-2xl shadow-black/20 backdrop-blur-xl sm:p-6">
           <div className="mb-4 flex items-center justify-between gap-4">
             <div>
               <h2 className="text-lg font-bold">Your progress</h2>
@@ -538,17 +538,17 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                 Small steps lead to big results.
               </p>
             </div>
-            <span className="text-2xl font-black text-indigo-600">{progress}%</span>
+            <span className="text-2xl font-black text-violet-300">{progress}%</span>
           </div>
           <button
-                  onClick={handleLogout}                  className="rounded-xl border border-white/10 px-4 py-2 text-sm hover:bg-white/10"
+                  onClick={handleLogout}                  className="rounded-xl border border-white/10 px-4 py-2 text-sm hover:bg-slate-900/70/10"
 >
               Log out
           </button>
-            <p className="text-sm text-slate-400">{userEmail}</p>
+            <p className="text-sm text-slate-500">{userEmail}</p>
 
           <div
-            className="h-3 overflow-hidden rounded-full bg-slate-100"
+            className="h-3 overflow-hidden rounded-full bg-white/10"
             role="progressbar"
             aria-valuenow={progress}
             aria-valuemin={0}
@@ -556,13 +556,13 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
             aria-label="Study task completion"
           >
             <div
-              className="h-full rounded-full bg-indigo-600 transition-all duration-500"
+              className="h-full rounded-full bg-gradient-to-r from-violet-500 to-cyan-400 transition-all duration-500"
               style={{ width: `${progress}%` }}
             />
           </div>
         </section>
 
-        <section className="mb-6 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <section className="mb-6 rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900/95 to-slate-900/60 p-5 shadow-2xl shadow-black/20 backdrop-blur-xl sm:p-6">
           <h2 className="text-lg font-bold">Add a study task</h2>
           <p className="mt-1 text-sm text-slate-500">
             Choose a subject, priority, and optional deadline.
@@ -578,7 +578,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
               onChange={(event) => setNewTask(event.target.value)}
               placeholder="What do you need to study?"
               aria-label="Task title"
-              className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 sm:col-span-2 lg:col-span-1"
+              className="min-w-0 rounded-xl border border-white/10 bg-slate-950/70 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20 sm:col-span-2 lg:col-span-1"
               required
             />
 
@@ -586,7 +586,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
               value={newSubject}
               onChange={(event) => setNewSubject(event.target.value)}
               aria-label="Task subject"
-              className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-indigo-500"
+              className="min-w-0 rounded-xl border border-white/10 bg-slate-950/70 px-4 py-3 outline-none focus:border-violet-400"
             >
               {SUBJECTS.map((subject) => (
                 <option key={subject} value={subject}>{subject}</option>
@@ -597,7 +597,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
               value={newPriority}
               onChange={(event) => setNewPriority(event.target.value as Priority)}
               aria-label="Task priority"
-              className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-indigo-500"
+              className="min-w-0 rounded-xl border border-white/10 bg-slate-950/70 px-4 py-3 outline-none focus:border-violet-400"
             >
               <option value="Low">Low priority</option>
               <option value="Medium">Medium priority</option>
@@ -610,19 +610,19 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
               min={today || undefined}
               onChange={(event) => setNewDeadline(event.target.value)}
               aria-label="Task deadline"
-              className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-indigo-500"
+              className="min-w-0 rounded-xl border border-white/10 bg-slate-950/70 px-4 py-3 outline-none focus:border-violet-400"
             />
 
             <button
               type="submit"
-              className="rounded-xl bg-indigo-600 px-5 py-3 font-bold text-white transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              className="rounded-xl bg-violet-600 px-5 py-3 font-bold text-white transition hover:bg-violet-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
             >
               + Add task
             </button>
           </form>
         </section>
 
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-6">
+        <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-5 shadow-xl shadow-black/10 sm:p-6">
           <div className="flex flex-col gap-4">
             <div>
               <h2 className="text-xl font-bold">Your tasks</h2>
@@ -638,14 +638,14 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="Search task or subject..."
                 aria-label="Search tasks"
-                className="min-w-0 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                className="min-w-0 rounded-xl border border-white/10 bg-slate-950/70 px-4 py-3 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20"
               />
 
               <select
                 value={subjectFilter}
                 onChange={(event) => setSubjectFilter(event.target.value)}
                 aria-label="Filter by subject"
-                className="min-w-0 rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-indigo-500"
+                className="min-w-0 rounded-xl border border-white/10 bg-slate-900/70 px-4 py-3 outline-none focus:border-violet-400"
               >
                 <option value="All">All subjects</option>
                 {Array.from(new Set([...SUBJECTS, ...tasks.map((task) => task.subject)]))
@@ -659,7 +659,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                 value={filter}
                 onChange={(event) => setFilter(event.target.value)}
                 aria-label="Filter task status"
-                className="min-w-0 rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-indigo-500"
+                className="min-w-0 rounded-xl border border-white/10 bg-slate-900/70 px-4 py-3 outline-none focus:border-violet-400"
               >
                 <option value="All">All tasks</option>
                 <option value="Pending">Pending</option>
@@ -683,7 +683,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                   <form
                     key={task.id}
                     onSubmit={saveEdit}
-                    className="space-y-3 rounded-xl border border-indigo-200 bg-indigo-50/50 p-4"
+                    className="space-y-3 rounded-xl border border-indigo-200 bg-violet-500/10/50 p-4"
                   >
                     <h3 className="font-bold">Edit task</h3>
 
@@ -691,7 +691,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                       value={editTitle}
                       onChange={(event) => setEditTitle(event.target.value)}
                       aria-label="Edit task title"
-                      className="w-full rounded-lg border border-slate-200 bg-white px-3 py-2.5 outline-none focus:border-indigo-500"
+                      className="w-full rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2.5 outline-none focus:border-violet-400"
                       required
                     />
 
@@ -700,7 +700,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                         value={editSubject}
                         onChange={(event) => setEditSubject(event.target.value)}
                         aria-label="Edit subject"
-                        className="min-w-0 rounded-lg border border-slate-200 bg-white px-3 py-2.5"
+                        className="min-w-0 rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2.5"
                       >
                         {Array.from(new Set([...SUBJECTS, editSubject])).map((subject) => (
                           <option key={subject} value={subject}>{subject}</option>
@@ -711,7 +711,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                         value={editPriority}
                         onChange={(event) => setEditPriority(event.target.value as Priority)}
                         aria-label="Edit priority"
-                        className="min-w-0 rounded-lg border border-slate-200 bg-white px-3 py-2.5"
+                        className="min-w-0 rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2.5"
                       >
                         <option value="Low">Low priority</option>
                         <option value="Medium">Medium priority</option>
@@ -723,21 +723,21 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                         value={editDeadline}
                         onChange={(event) => setEditDeadline(event.target.value)}
                         aria-label="Edit deadline"
-                        className="min-w-0 rounded-lg border border-slate-200 bg-white px-3 py-2.5"
+                        className="min-w-0 rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2.5"
                       />
                     </div>
 
                     <div className="flex flex-wrap gap-2">
                       <button
                         type="submit"
-                        className="rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white hover:bg-indigo-700"
+                        className="rounded-lg bg-violet-600 px-4 py-2 font-semibold text-white hover:bg-violet-500"
                       >
                         Save changes
                       </button>
                       <button
                         type="button"
                         onClick={() => setEditingId(null)}
-                        className="rounded-lg border border-slate-200 bg-white px-4 py-2 font-semibold hover:bg-slate-50"
+                        className="rounded-lg border border-white/10 bg-slate-900/70 px-4 py-2 font-semibold hover:bg-slate-950/70"
                       >
                         Cancel
                       </button>
@@ -749,10 +749,10 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
               return (
                 <article
                   key={task.id}
-                  className={`rounded-xl border p-4 transition hover:shadow-sm ${
+                  className={`rounded-xl border p-4 transition hover:shadow-xl shadow-black/10 ${
                     isOverdue
-                      ? "border-rose-200 bg-rose-50/40"
-                      : "border-slate-200 bg-white"
+                      ? "border-rose-400/20 bg-rose-400/5"
+                      : "border-white/10 bg-slate-900/70"
                   }`}
                 >
                   <div className="flex items-start gap-3">
@@ -767,14 +767,14 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                     <div className="min-w-0 flex-1">
                       <p
                         className={`break-words font-semibold ${
-                          task.completed ? "text-slate-400 line-through" : ""
+                          task.completed ? "text-slate-500 line-through" : ""
                         }`}
                       >
                         {task.title}
                       </p>
 
                       <div className="mt-2 flex flex-wrap items-center gap-2">
-                        <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-bold text-indigo-700">
+                        <span className="rounded-full bg-violet-500/10 px-2.5 py-1 text-xs font-bold text-violet-200">
                           {task.subject}
                         </span>
 
@@ -786,7 +786,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
 
                         {task.deadline && (
                           <span className={`text-xs font-medium ${
-                            isOverdue ? "text-rose-700" : "text-slate-500"
+                            isOverdue ? "text-rose-300" : "text-slate-500"
                           }`}>
                             {isOverdue ? "⚠ Overdue · " : "Due · "}
                             {formatDate(task.deadline)}
@@ -794,7 +794,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                         )}
 
                         {task.completed && (
-                          <span className="text-xs font-semibold text-emerald-600">
+                          <span className="text-xs font-semibold text-emerald-300">
                             ✓ Completed
                           </span>
                         )}
@@ -806,7 +806,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                         type="button"
                         onClick={() => startEditing(task)}
                         aria-label={`Edit ${task.title}`}
-                        className="rounded-lg px-3 py-2 text-sm font-semibold text-indigo-600 hover:bg-indigo-50"
+                        className="rounded-lg px-3 py-2 text-sm font-semibold text-violet-300 hover:bg-violet-500/10"
                       >
                         Edit
                       </button>
@@ -814,7 +814,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                         type="button"
                         onClick={() => deleteTask(task.id)}
                         aria-label={`Delete ${task.title}`}
-                        className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-400 hover:bg-rose-50 hover:text-rose-600"
+                        className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-500 hover:bg-rose-50 hover:text-rose-600"
                       >
                         Delete
                       </button>
@@ -825,7 +825,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
             })}
 
             {visibleTasks.length === 0 && (
-              <div className="rounded-xl border border-dashed border-slate-300 px-4 py-12 text-center">
+              <div className="rounded-xl border border-dashed border-white/15 px-4 py-12 text-center">
                 <p className="text-lg font-bold">No matching tasks</p>
                 <p className="mt-1 text-sm text-slate-500">
                   Try a different search or filter, or add a new study task.
@@ -837,7 +837,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                     setFilter("All");
                     setSubjectFilter("All");
                   }}
-                  className="mt-4 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700"
+                  className="mt-4 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-500"
                 >
                   Clear filters
                 </button>
@@ -846,7 +846,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
           </div>
         </section>
 
-        <footer className="py-8 text-center text-sm text-slate-400">
+        <footer className="py-8 text-center text-sm text-slate-500">
           Built step by step · Student Study Planner
         </footer>
       </div>
@@ -865,10 +865,10 @@ function StatCard({
 }) 
 {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+    <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900 to-slate-900/60 p-5 shadow-xl shadow-black/20 transition duration-200 hover:-translate-y-1 hover:border-violet-400/30">
       <p className="text-sm font-semibold text-slate-500">{label}</p>
-      <p className="mt-2 text-3xl font-black tracking-tight">{value}</p>
-      <p className="mt-1 text-xs text-slate-400">{detail}</p>
+      <p className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">{value}</p>
+      <p className="mt-1 text-xs text-slate-500">{detail}</p>
     </div>
   );
 }
