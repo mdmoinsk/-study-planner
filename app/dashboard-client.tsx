@@ -16,24 +16,39 @@ type Task = {
   subject: string;
 };
 
-const DEFAULT_TASKS: Task[] = [
-  {
-    id: 1,
-    title: "Revise Computer Networks",
-    completed: false,
-    priority: "High",
-    deadline: "2026-10-15",
-    subject: "Computer Networks",
-  },
-  {
-    id: 2,
-    title: "Practice JavaScript",
-    completed: false,
-    priority: "Medium",
-    deadline: "2026-10-17",
-    subject: "Web Development",
-  },
-];
+function getLocalDateString(): string {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
+function formatDeadline(deadline: string): string {
+  const date = new Date(`${deadline}T00:00:00`);
+  return Number.isNaN(date.getTime())
+    ? deadline
+    : date.toLocaleDateString(undefined, {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
+}
+
+function getDeadlineStatus(
+  task: Pick<Task, "deadline" | "completed">,
+  today: string
+): "overdue" | "today" | "soon" | "none" {
+  if (!task.deadline || task.completed) return "none";
+  if (task.deadline < today) return "overdue";
+  if (task.deadline === today) return "today";
+
+  const todayDate = new Date(`${today}T00:00:00`);
+  const deadlineDate = new Date(`${task.deadline}T00:00:00`);
+  const daysUntilDeadline =
+    (deadlineDate.getTime() - todayDate.getTime()) / (24 * 60 * 60 * 1000);
+  return daysUntilDeadline <= 7 ? "soon" : "none";
+}
 
 const SUBJECTS = [
   "General",
@@ -51,58 +66,6 @@ const priorityStyles: Record<Priority, string> = {
   Medium: "bg-amber-400/10 text-amber-300 ring-amber-400/20",
   High: "bg-rose-400/10 text-rose-300 ring-rose-400/20",
 };
-
-function getLocalDate() {
-  const date = new Date();
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
-function formatDate(value: string) {
-  if (!value) return "";
-  return new Date(`${value}T12:00:00`).toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-}
-
-function normalizeTask(value: unknown, index: number): Task | null {
-  if (!value || typeof value !== "object") return null;
-
-  const item = value as Record<string, unknown>;
-
-  if (
-    typeof item.title !== "string" ||
-    typeof item.completed !== "boolean"
-  ) {
-    return null;
-  }
-
-  const priority: Priority =
-    item.priority === "Low" ||
-    item.priority === "Medium" ||
-    item.priority === "High"
-      ? item.priority
-      : "Medium";
-
-  return {
-    id:
-      typeof item.id === "string" || typeof item.id === "number"
-        ? item.id
-        : `legacy-${index}`,
-    title: item.title,
-    completed: item.completed,
-    priority,
-    deadline: typeof item.deadline === "string" ? item.deadline : "",
-    subject:
-      typeof item.subject === "string" && item.subject.trim()
-        ? item.subject
-        : "General",
-  };
-}
 
 type DatabaseTask = {
   id: string;
@@ -125,12 +88,13 @@ function fromDatabaseTask(row: DatabaseTask): Task {
 }
 
 export default function Home() {
-  const [tasks, setTasks] = useState<Task[]>(DEFAULT_TASKS);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [newTask, setNewTask] = useState("");
   const [newPriority, setNewPriority] = useState<Priority>("Medium");
   const [newSubject, setNewSubject] = useState("Computer Networks");
   const [newDeadline, setNewDeadline] = useState("");
 
+  const [view, setView] = useState<"list" | "week">("list");
   const [filter, setFilter] = useState("All");
   const [subjectFilter, setSubjectFilter] = useState("All");
   const [search, setSearch] = useState("");
@@ -182,63 +146,14 @@ useEffect(() => {
       if (loadError) throw loadError;
       if (!active) return;
 
-      let loadedTasks: Task[];
-
-      if (rows && rows.length > 0) {
-        loadedTasks = (rows as DatabaseTask[]).map(fromDatabaseTask);
-      } else {
-        // Only import browser tasks when the user's database is empty.
-        let localTasks: Task[] = DEFAULT_TASKS;
-
-        try {
-          const saved = localStorage.getItem("studyTasks");
-
-          if (saved !== null) {
-            const parsed: unknown = JSON.parse(saved);
-
-            if (Array.isArray(parsed)) {
-              localTasks = parsed
-                .map((item, index) => normalizeTask(item, index))
-                .filter((task): task is Task => task !== null);
-            }
-          }
-        } catch {
-          console.warn("Could not read existing browser tasks.");
-        }
-
-        if (localTasks.length > 0) {
-          const { data: inserted, error: insertError } =
-            await supabase
-              .from("tasks")
-              .insert(
-                localTasks.map((task) => ({
-                  user_id: user.id,
-                  title: task.title,
-                  completed: task.completed,
-                  priority: task.priority,
-                  subject: task.subject,
-                  deadline: task.deadline || null,
-                }))
-              )
-              .select(
-                "id, title, completed, priority, deadline, subject"
-              );
-
-          if (insertError) throw insertError;
-
-          loadedTasks = (inserted as DatabaseTask[]).map(
-            fromDatabaseTask
-          );
-        } else {
-          loadedTasks = [];
-        }
-      }
+      const loadedTasks = ((rows ?? []) as DatabaseTask[]).map(
+        fromDatabaseTask
+      );
 
       if (!active) return;
 
       setTasks(loadedTasks);
-      localStorage.setItem("studyTasks", JSON.stringify(loadedTasks));
-      setToday(getLocalDate());
+      setToday(getLocalDateString());
       setIsLoaded(true);
       setAuthChecking(false);
     } catch (error) {
@@ -263,14 +178,14 @@ useEffect(() => {
 
   // Save after loading, so initial rendering doesn't overwrite saved data.
   useEffect(() => {
-    if (!isLoaded) return;
+    if (!isLoaded || !userId) return;
 
     try {
-      localStorage.setItem("studyTasks", JSON.stringify(tasks));
+      localStorage.setItem(`studyTasks:${userId}`, JSON.stringify(tasks));
     } catch (error) {
       console.error("Could not save tasks:", error);
     }
-  }, [tasks, isLoaded]);
+  }, [tasks, isLoaded, userId]);
 
 async function addTask(event?: React.FormEvent<HTMLFormElement>) {
   event?.preventDefault();
@@ -425,9 +340,13 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
   const completedCount = tasks.filter((task) => task.completed).length;
   const pendingCount = tasks.length - completedCount;
 
-  const overdueCount = tasks.filter(
-    (task) => !task.completed && task.deadline && today && task.deadline < today
-  ).length;
+  const countByStatus = (status: string) =>
+    tasks.filter((task) => getDeadlineStatus(task, today) === status).length;
+
+  // Overdue tasks are also counted as Pending (they are not finished).
+  const overdueCount = countByStatus("overdue");
+  const dueTodayCount = countByStatus("today");
+  const dueSoonCount = countByStatus("soon");
 
   const progress = tasks.length
     ? Math.round((completedCount / tasks.length) * 100)
@@ -450,11 +369,13 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
       if (filter === "Completed") matchesStatus = task.completed;
       if (filter === "High") matchesStatus = task.priority === "High";
       if (filter === "Overdue") {
-        matchesStatus =
-          !task.completed &&
-          Boolean(task.deadline) &&
-          Boolean(today) &&
-          task.deadline < today;
+        matchesStatus = getDeadlineStatus(task, today) === "overdue";
+      }
+      if (filter === "Today") {
+        matchesStatus = getDeadlineStatus(task, today) === "today";
+      }
+      if (filter === "Soon") {
+        matchesStatus = getDeadlineStatus(task, today) === "soon";
       }
 
       return matchesSearch && matchesSubject && matchesStatus;
@@ -518,16 +439,44 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
               TODAY
             </p>
             <p className="mt-1 font-bold">
-              {today ? formatDate(today) : "Loading date..."}
+              {today ? formatDeadline(today) : "Loading date..."}
             </p>
+            <div className="mt-3 flex items-center justify-between gap-3 border-t border-white/10 pt-3">
+              <p className="min-w-0 truncate text-xs text-slate-400" title={userEmail}>
+                {userEmail}
+              </p>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="shrink-0 rounded-lg border border-white/10 px-3 py-1.5 text-xs font-semibold hover:bg-white/5"
+              >
+                Log out
+              </button>
+            </div>
           </div>
         </header>
+
+        {taskError && (
+          <div
+            role="alert"
+            className="mb-6 flex items-start justify-between gap-3 rounded-2xl border border-rose-400/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200"
+          >
+            <p>{taskError}</p>
+            <button
+              type="button"
+              onClick={() => setTaskError("")}
+              className="shrink-0 font-semibold hover:text-white"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
 
         <section className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <StatCard label="Total tasks" value={tasks.length} detail="All study tasks" />
           <StatCard label="Completed" value={completedCount} detail={`${progress}% overall progress`} />
-          <StatCard label="Pending" value={pendingCount} detail="Still to work on" />
-          <StatCard label="Overdue" value={overdueCount} detail="Past deadline" />
+          <StatCard label="Pending" value={pendingCount} detail={`${dueTodayCount} due today · ${dueSoonCount} due soon`} />
+          <StatCard label="Overdue" value={overdueCount} detail="Past deadline, included in Pending" />
         </section>
 
         <section className="mb-6 rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900/95 to-slate-900/60 p-5 shadow-2xl shadow-black/20 backdrop-blur-xl sm:p-6">
@@ -540,13 +489,6 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
             </div>
             <span className="text-2xl font-black text-violet-300">{progress}%</span>
           </div>
-          <button
-                  onClick={handleLogout}                  className="rounded-xl border border-white/10 px-4 py-2 text-sm hover:bg-slate-900/70/10"
->
-              Log out
-          </button>
-            <p className="text-sm text-slate-500">{userEmail}</p>
-
           <div
             className="h-3 overflow-hidden rounded-full bg-white/10"
             role="progressbar"
@@ -615,22 +557,50 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
 
             <button
               type="submit"
-              className="rounded-xl bg-violet-600 px-5 py-3 font-bold text-white transition hover:bg-violet-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              disabled={taskSyncing}
+              className="rounded-xl bg-violet-600 px-5 py-3 font-bold text-white transition hover:bg-violet-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              + Add task
+              {taskSyncing ? "Adding..." : "+ Add task"}
             </button>
           </form>
         </section>
 
         <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-5 shadow-xl shadow-black/10 sm:p-6">
           <div className="flex flex-col gap-4">
-            <div>
-              <h2 className="text-xl font-bold">Your tasks</h2>
-              <p className="mt-1 text-sm text-slate-500">
-                Search, filter, edit, and manage your study plan.
-              </p>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h2 className="text-xl font-bold">Your tasks</h2>
+                <p className="mt-1 text-sm text-slate-500">
+                  {view === "list"
+                    ? "Search, filter, edit, and manage your study plan."
+                    : "See what is due each day of the week."}
+                </p>
+              </div>
+
+              <div
+                role="group"
+                aria-label="Task view"
+                className="inline-flex rounded-xl border border-white/10 bg-slate-950/60 p-1 text-sm font-semibold"
+              >
+                {(["list", "week"] as const).map((option) => (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => setView(option)}
+                    aria-pressed={view === option}
+                    className={`rounded-lg px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-violet-500/40 ${
+                      view === option
+                        ? "bg-violet-600 text-white"
+                        : "text-slate-400 hover:text-white"
+                    }`}
+                  >
+                    {option === "list" ? "List" : "Week"}
+                  </button>
+                ))}
+              </div>
             </div>
 
+            {view === "list" && (
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               <input
                 type="search"
@@ -666,24 +636,40 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                 <option value="Completed">Completed</option>
                 <option value="High">High priority</option>
                 <option value="Overdue">Overdue</option>
+                <option value="Today">Due today</option>
+                <option value="Soon">Due soon</option>
               </select>
             </div>
+            )}
           </div>
 
+          {view === "week" && (
+            <WeeklyCalendar
+              tasks={tasks}
+              today={today}
+              onEditTask={(task) => {
+                // Clear filters so the task is visible in the list for editing.
+                setSearch("");
+                setFilter("All");
+                setSubjectFilter("All");
+                setView("list");
+                startEditing(task);
+              }}
+            />
+          )}
+
+          {view === "list" && (
           <div className="mt-5 space-y-3">
             {visibleTasks.map((task) => {
-              const isOverdue =
-                !task.completed &&
-                Boolean(task.deadline) &&
-                Boolean(today) &&
-                task.deadline < today;
+              const status = getDeadlineStatus(task, today);
+              const isOverdue = status === "overdue";
 
               if (editingId === task.id) {
                 return (
                   <form
                     key={task.id}
                     onSubmit={saveEdit}
-                    className="space-y-3 rounded-xl border border-indigo-200 bg-violet-500/10/50 p-4"
+                    className="space-y-3 rounded-xl border border-violet-400/30 bg-violet-500/10 p-4"
                   >
                     <h3 className="font-bold">Edit task</h3>
 
@@ -785,11 +771,25 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                         </span>
 
                         {task.deadline && (
-                          <span className={`text-xs font-medium ${
-                            isOverdue ? "text-rose-300" : "text-slate-500"
-                          }`}>
-                            {isOverdue ? "⚠ Overdue · " : "Due · "}
-                            {formatDate(task.deadline)}
+                          <span className="text-xs font-medium text-slate-400">
+                            {task.completed ? "Was due " : "Due "}
+                            {formatDeadline(task.deadline)}
+                          </span>
+                        )}
+
+                        {status === "overdue" && (
+                          <span className="rounded-full bg-rose-400/10 px-2.5 py-1 text-xs font-bold text-rose-300 ring-1 ring-inset ring-rose-400/20">
+                            Overdue
+                          </span>
+                        )}
+                        {status === "today" && (
+                          <span className="rounded-full bg-amber-400/10 px-2.5 py-1 text-xs font-bold text-amber-300 ring-1 ring-inset ring-amber-400/20">
+                            Due today
+                          </span>
+                        )}
+                        {status === "soon" && (
+                          <span className="rounded-full bg-sky-400/10 px-2.5 py-1 text-xs font-bold text-sky-300 ring-1 ring-inset ring-sky-400/20">
+                            Due soon
                           </span>
                         )}
 
@@ -814,7 +814,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                         type="button"
                         onClick={() => deleteTask(task.id)}
                         aria-label={`Delete ${task.title}`}
-                        className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-500 hover:bg-rose-50 hover:text-rose-600"
+                        className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-500 hover:bg-rose-500/10 hover:text-rose-300"
                       >
                         Delete
                       </button>
@@ -844,6 +844,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
               </div>
             )}
           </div>
+          )}
         </section>
 
         <footer className="py-8 text-center text-sm text-slate-500">
@@ -869,6 +870,78 @@ function StatCard({
       <p className="text-sm font-semibold text-slate-500">{label}</p>
       <p className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">{value}</p>
       <p className="mt-1 text-xs text-slate-500">{detail}</p>
+    </div>
+  );
+}
+
+function WeeklyCalendar({
+  tasks,
+  today,
+  onEditTask,
+}: {
+  tasks: Task[];
+  today: string;
+  onEditTask: (task: Task) => void;
+}) {
+  const anchor = today ? new Date(`${today}T00:00:00`) : new Date();
+  const mondayOffset = (anchor.getDay() + 6) % 7;
+  const monday = new Date(anchor);
+  monday.setDate(anchor.getDate() - mondayOffset);
+
+  const days = Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(monday);
+    date.setDate(monday.getDate() + index);
+    const dateString = [
+      date.getFullYear(),
+      String(date.getMonth() + 1).padStart(2, "0"),
+      String(date.getDate()).padStart(2, "0"),
+    ].join("-");
+
+    return { date, dateString };
+  });
+
+  return (
+    <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
+      {days.map(({ date, dateString }) => {
+        const dayTasks = tasks.filter((task) => task.deadline === dateString);
+
+        return (
+          <section
+            key={dateString}
+            className={`min-h-36 rounded-xl border p-3 ${
+              dateString === today
+                ? "border-violet-400/40 bg-violet-500/10"
+                : "border-white/10 bg-slate-950/40"
+            }`}
+          >
+            <h3 className="font-bold">
+              {date.toLocaleDateString(undefined, { weekday: "short" })}
+              <span className="ml-2 text-sm font-medium text-slate-400">
+                {date.toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+              </span>
+            </h3>
+            <div className="mt-2 space-y-2">
+              {dayTasks.map((task) => (
+                <button
+                  key={task.id}
+                  type="button"
+                  onClick={() => onEditTask(task)}
+                  className={`block w-full rounded-lg border border-white/10 px-2.5 py-2 text-left text-xs hover:border-violet-400/40 ${
+                    task.completed ? "text-slate-500 line-through" : "text-slate-200"
+                  }`}
+                  title="Edit task"
+                >
+                  <span className="block truncate font-semibold">{task.title}</span>
+                  <span className="mt-1 block truncate text-slate-400">{task.subject}</span>
+                </button>
+              ))}
+              {dayTasks.length === 0 && (
+                <p className="pt-2 text-xs text-slate-600">No tasks due</p>
+              )}
+            </div>
+          </section>
+        );
+      })}
     </div>
   );
 }
