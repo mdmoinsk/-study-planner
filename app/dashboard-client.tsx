@@ -419,15 +419,15 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
     );
 }
   return (
-    <main className="min-h-screen bg-[#080d1b] text-slate-100">
+    <main className="min-h-screen bg-[#f7f8fc] text-[#171a2b]">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <header className="mb-8 flex flex-col gap-5 rounded-3xl border border-white/10 bg-gradient-to-r from-violet-500/10 via-slate-900/80 to-cyan-500/5 p-6 shadow-2xl shadow-black/20 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+        <header className="mb-8 flex flex-col gap-5 rounded-[2rem] border border-[#e8eaf2] bg-white p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-8">
           <div>
-            <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.24em] text-violet-300">
+            <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.24em] text-[#6658f5]">
               ✦ STUDENT WORKSPACE
             </p>
             <h1 className="mt-3 text-3xl font-black tracking-tight sm:text-5xl">
-              My Study Planner<span className="text-violet-300">.</span>
+              My Study Planner<span className="text-[#171a2b]">.</span>
             </h1>
             <p className="mt-2 text-slate-500">
               Organize your subjects. Prioritize your work. Track your progress.
@@ -487,7 +487,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                 Small steps lead to big results.
               </p>
             </div>
-            <span className="text-2xl font-black text-violet-300">{progress}%</span>
+            <span className="text-2xl font-black text-[#6658f0]">{progress}%</span>
           </div>
           <div
             className="h-3 overflow-hidden rounded-full bg-white/10"
@@ -520,7 +520,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
               onChange={(event) => setNewTask(event.target.value)}
               placeholder="What do you need to study?"
               aria-label="Task title"
-              className="min-w-0 rounded-xl border border-white/10 bg-slate-950/70 px-4 py-3 text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20 sm:col-span-2 lg:col-span-1"
+              className="min-w-0 rounded-xl border border-white/10 bg-slate-950/70 px-4 py-3 text-[#171a2b] outline-none transition placeholder:text-slate-600 focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20 sm:col-span-2 lg:col-span-1"
               required
             />
 
@@ -806,7 +806,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                         type="button"
                         onClick={() => startEditing(task)}
                         aria-label={`Edit ${task.title}`}
-                        className="rounded-lg px-3 py-2 text-sm font-semibold text-violet-300 hover:bg-violet-500/10"
+                        className="rounded-lg px-3 py-2 text-sm font-semibold text-[#6658f5] hover:bg-violet-500/10"
                       >
                         Edit
                       </button>
@@ -863,16 +863,32 @@ function StatCard({
   label: string;
   value: number;
   detail: string;
-}) 
-{
+}) {
   return (
-    <div className="rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900 to-slate-900/60 p-5 shadow-xl shadow-black/20 transition duration-200 hover:-translate-y-1 hover:border-violet-400/30">
-      <p className="text-sm font-semibold text-slate-500">{label}</p>
-      <p className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">{value}</p>
-      <p className="mt-1 text-xs text-slate-500">{detail}</p>
+    <div className="group relative overflow-hidden rounded-[1.5rem] border border-[#e8eaf2] bg-white p-5 shadow-[0_4px_20px_rgba(25,30,60,0.03)] transition-all duration-300 hover:-translate-y-1 hover:border-[#d8d2ff] hover:shadow-[0_14px_35px_rgba(80,65,180,0.09)] sm:p-6">
+      <div className="flex items-start justify-between gap-3">
+        <p className="text-sm font-semibold tracking-wide text-[#777c91]">
+          {label}
+        </p>
+
+        <span className="h-2.5 w-2.5 rounded-full bg-[#c8f169] ring-4 ring-[#c8f169]/20 transition-transform duration-300 group-hover:scale-125" />
+      </div>
+
+      <p className="mt-5 text-4xl font-black tracking-[-0.06em] text-[#171a2b] sm:text-[2.75rem]">
+        {value}
+      </p>
+
+      <p className="mt-2 text-xs font-medium leading-relaxed text-[#777c91]">
+        {detail}
+      </p>
+
+      <div className="mt-5 h-1 overflow-hidden rounded-full bg-[#f0efff]">
+        <div className="animate-progress-fill h-full w-1/3 rounded-full bg-[#6658f5]" />
+      </div>
     </div>
   );
 }
+
 
 function WeeklyCalendar({
   tasks,
