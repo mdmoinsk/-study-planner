@@ -62,9 +62,9 @@ const SUBJECTS = [
 ];
 
 const priorityStyles: Record<Priority, string> = {
-  Low: "bg-emerald-400/10 text-emerald-300 ring-emerald-400/20",
-  Medium: "bg-amber-400/10 text-amber-300 ring-amber-400/20",
-  High: "bg-rose-400/10 text-rose-300 ring-rose-400/20",
+  Low: "bg-emerald-50 text-emerald-700 ring-emerald-200",
+  Medium: "bg-amber-50 text-amber-700 ring-amber-200",
+  High: "bg-rose-50 text-rose-700 ring-rose-200",
 };
 
 type DatabaseTask = {
@@ -352,6 +352,27 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
     ? Math.round((completedCount / tasks.length) * 100)
     : 0;
 
+  const highPriorityPending = tasks.filter(
+    (task) => task.priority === "High" && !task.completed
+  ).length;
+  const subjectAnalytics = useMemo(() => {
+    const grouped = new Map<string, { total: number; completed: number }>();
+    for (const task of tasks) {
+      const current = grouped.get(task.subject) ?? { total: 0, completed: 0 };
+      current.total += 1;
+      if (task.completed) current.completed += 1;
+      grouped.set(task.subject, current);
+    }
+    return [...grouped.entries()]
+      .map(([subject, counts]) => ({
+        subject,
+        ...counts,
+        percent: counts.total ? Math.round((counts.completed / counts.total) * 100) : 0,
+      }))
+      .sort((a, b) => b.total - a.total || a.subject.localeCompare(b.subject))
+      .slice(0, 5);
+  }, [tasks]);
+
   const visibleTasks = useMemo(() => {
     const query = search.trim().toLowerCase();
 
@@ -413,7 +434,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
 
   if (authChecking) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-slate-950 text-white">
+      <main className="flex min-h-screen items-center justify-center bg-[#f7f8fc] text-[#171a2b]">
         Checking your session...
       </main>
     );
@@ -429,26 +450,26 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
             <h1 className="mt-3 text-3xl font-black tracking-tight sm:text-5xl">
               My Study Planner<span className="text-[#171a2b]">.</span>
             </h1>
-            <p className="mt-2 text-slate-500">
+            <p className="mt-2 text-[#777c91]">
               Organize your subjects. Prioritize your work. Track your progress.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-slate-900/80 px-5 py-4 shadow-xl shadow-black/20 backdrop-blur-xl">
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">
+          <div className="rounded-2xl border border-[#e8eaf2] bg-white px-5 py-4 shadow-sm">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#777c91]">
               TODAY
             </p>
             <p className="mt-1 font-bold">
               {today ? formatDeadline(today) : "Loading date..."}
             </p>
-            <div className="mt-3 flex items-center justify-between gap-3 border-t border-white/10 pt-3">
-              <p className="min-w-0 truncate text-xs text-slate-400" title={userEmail}>
+            <div className="mt-3 flex items-center justify-between gap-3 border-t border-[#e8eaf2] pt-3">
+              <p className="min-w-0 truncate text-xs text-[#777c91]" title={userEmail}>
                 {userEmail}
               </p>
               <button
                 type="button"
                 onClick={handleLogout}
-                className="shrink-0 rounded-lg border border-white/10 px-3 py-1.5 text-xs font-semibold hover:bg-white/5"
+                className="shrink-0 rounded-lg border border-[#e8eaf2] px-3 py-1.5 text-xs font-semibold hover:bg-[#f7f8fc]"
               >
                 Log out
               </button>
@@ -459,13 +480,13 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
         {taskError && (
           <div
             role="alert"
-            className="mb-6 flex items-start justify-between gap-3 rounded-2xl border border-rose-400/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200"
+            className="mb-6 flex items-start justify-between gap-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700"
           >
             <p>{taskError}</p>
             <button
               type="button"
               onClick={() => setTaskError("")}
-              className="shrink-0 font-semibold hover:text-white"
+              className="shrink-0 font-semibold hover:text-[#171a2b]"
             >
               Dismiss
             </button>
@@ -479,18 +500,18 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
           <StatCard label="Overdue" value={overdueCount} detail="Past deadline, included in Pending" />
         </section>
 
-        <section className="mb-6 rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900/95 to-slate-900/60 p-5 shadow-2xl shadow-black/20 backdrop-blur-xl sm:p-6">
+        <section className="mb-6 overflow-hidden rounded-3xl border border-[#e8eaf2] bg-white p-5 shadow-sm sm:p-6">
           <div className="mb-4 flex items-center justify-between gap-4">
             <div>
               <h2 className="text-lg font-bold">Your progress</h2>
-              <p className="mt-1 text-sm text-slate-500">
+              <p className="mt-1 text-sm text-[#777c91]">
                 Small steps lead to big results.
               </p>
             </div>
             <span className="text-2xl font-black text-[#6658f0]">{progress}%</span>
           </div>
           <div
-            className="h-3 overflow-hidden rounded-full bg-white/10"
+            className="h-4 overflow-hidden rounded-full bg-[#f0efff] ring-1 ring-inset ring-[#e8eaf2]"
             role="progressbar"
             aria-valuenow={progress}
             aria-valuemin={0}
@@ -498,15 +519,65 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
             aria-label="Study task completion"
           >
             <div
-              className="h-full rounded-full bg-gradient-to-r from-violet-500 to-cyan-400 transition-all duration-500"
+              className="animate-progress-fill relative h-full rounded-full bg-gradient-to-r from-[#6658f5] via-[#8b7cff] to-[#c8f169] transition-all duration-700 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
         </section>
 
-        <section className="mb-6 rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900/95 to-slate-900/60 p-5 shadow-2xl shadow-black/20 backdrop-blur-xl sm:p-6">
+        <section className="mb-6 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
+          <div className="rounded-3xl border border-[#e8eaf2] bg-white p-5 shadow-sm sm:p-6">
+            <div className="mb-5 flex items-start justify-between gap-3">
+              <div>
+                <h2 className="text-lg font-bold text-[#171a2b]">Subject analytics</h2>
+                <p className="mt-1 text-sm text-[#777c91]">Progress calculated from your saved tasks.</p>
+              </div>
+              <span className="rounded-xl bg-violet-50 px-3 py-2 text-xs font-bold text-violet-700">{subjectAnalytics.length} subjects</span>
+            </div>
+            {subjectAnalytics.length ? (
+              <div className="space-y-4">
+                {subjectAnalytics.map((item) => (
+                  <div key={item.subject}>
+                    <div className="mb-2 flex items-center justify-between gap-3 text-sm">
+                      <span className="truncate font-semibold text-[#34364a]">{item.subject}</span>
+                      <span className="shrink-0 text-xs font-semibold text-[#777c91]">{item.completed}/{item.total} · {item.percent}%</span>
+                    </div>
+                    <div className="h-2.5 overflow-hidden rounded-full bg-[#f0efff]">
+                      <div className="h-full rounded-full bg-gradient-to-r from-[#6658f5] to-[#a69cff] transition-all duration-700" style={{ width: `${item.percent}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-2xl border border-dashed border-[#d9dbea] px-4 py-8 text-center">
+                <p className="font-semibold text-[#34364a]">Your analytics will appear here</p>
+                <p className="mt-1 text-sm text-[#777c91]">Add a few tasks to see progress by subject.</p>
+              </div>
+            )}
+          </div>
+          <div className="rounded-3xl border border-[#e8eaf2] bg-white p-5 shadow-sm sm:p-6">
+            <h2 className="text-lg font-bold text-[#171a2b]">Focus overview</h2>
+            <p className="mt-1 text-sm text-[#777c91]">What needs your attention next.</p>
+            <div className="mt-5 space-y-3">
+              <div className="flex items-center justify-between rounded-2xl bg-rose-50 px-4 py-3">
+                <div><p className="text-sm font-semibold text-rose-800">High-priority pending</p><p className="mt-0.5 text-xs text-rose-700">Important tasks not finished</p></div>
+                <span className="text-2xl font-black text-rose-700">{highPriorityPending}</span>
+              </div>
+              <div className="flex items-center justify-between rounded-2xl bg-amber-50 px-4 py-3">
+                <div><p className="text-sm font-semibold text-amber-800">Due today</p><p className="mt-0.5 text-xs text-amber-700">Tasks with today's deadline</p></div>
+                <span className="text-2xl font-black text-amber-700">{dueTodayCount}</span>
+              </div>
+              <div className="flex items-center justify-between rounded-2xl bg-violet-50 px-4 py-3">
+                <div><p className="text-sm font-semibold text-violet-800">Overdue</p><p className="mt-0.5 text-xs text-violet-700">Pending tasks past deadline</p></div>
+                <span className="text-2xl font-black text-violet-700">{overdueCount}</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section className="mb-6 rounded-3xl border border-[#e8eaf2] bg-white p-5 shadow-sm sm:p-6">
           <h2 className="text-lg font-bold">Add a study task</h2>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="mt-1 text-sm text-[#777c91]">
             Choose a subject, priority, and optional deadline.
           </p>
 
@@ -520,7 +591,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
               onChange={(event) => setNewTask(event.target.value)}
               placeholder="What do you need to study?"
               aria-label="Task title"
-              className="min-w-0 rounded-xl border border-white/10 bg-slate-950/70 px-4 py-3 text-[#171a2b] outline-none transition placeholder:text-slate-600 focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20 sm:col-span-2 lg:col-span-1"
+              className="min-w-0 rounded-xl border border-[#e8eaf2] bg-white px-4 py-3 text-[#171a2b] outline-none transition placeholder:text-[#969aab] focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20 sm:col-span-2 lg:col-span-1"
               required
             />
 
@@ -528,7 +599,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
               value={newSubject}
               onChange={(event) => setNewSubject(event.target.value)}
               aria-label="Task subject"
-              className="min-w-0 rounded-xl border border-white/10 bg-slate-950/70 px-4 py-3 outline-none focus:border-violet-400"
+              className="min-w-0 rounded-xl border border-[#e1e3ee] bg-white px-4 py-3 text-[#171a2b] outline-none focus:border-violet-400"
             >
               {SUBJECTS.map((subject) => (
                 <option key={subject} value={subject}>{subject}</option>
@@ -539,7 +610,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
               value={newPriority}
               onChange={(event) => setNewPriority(event.target.value as Priority)}
               aria-label="Task priority"
-              className="min-w-0 rounded-xl border border-white/10 bg-slate-950/70 px-4 py-3 outline-none focus:border-violet-400"
+              className="min-w-0 rounded-xl border border-[#e1e3ee] bg-white px-4 py-3 text-[#171a2b] outline-none focus:border-violet-400"
             >
               <option value="Low">Low priority</option>
               <option value="Medium">Medium priority</option>
@@ -552,7 +623,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
               min={today || undefined}
               onChange={(event) => setNewDeadline(event.target.value)}
               aria-label="Task deadline"
-              className="min-w-0 rounded-xl border border-white/10 bg-slate-950/70 px-4 py-3 outline-none focus:border-violet-400"
+              className="min-w-0 rounded-xl border border-[#e1e3ee] bg-white px-4 py-3 text-[#171a2b] outline-none focus:border-violet-400"
             />
 
             <button
@@ -565,12 +636,12 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
           </form>
         </section>
 
-        <section className="rounded-2xl border border-white/10 bg-slate-900/70 p-5 shadow-xl shadow-black/10 sm:p-6">
+        <section className="rounded-2xl border border-[#e8eaf2] bg-white p-5 shadow-sm sm:p-6">
           <div className="flex flex-col gap-4">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <h2 className="text-xl font-bold">Your tasks</h2>
-                <p className="mt-1 text-sm text-slate-500">
+                <p className="mt-1 text-sm text-[#777c91]">
                   {view === "list"
                     ? "Search, filter, edit, and manage your study plan."
                     : "See what is due each day of the week."}
@@ -580,7 +651,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
               <div
                 role="group"
                 aria-label="Task view"
-                className="inline-flex rounded-xl border border-white/10 bg-slate-950/60 p-1 text-sm font-semibold"
+                className="inline-flex rounded-xl border border-[#e8eaf2] bg-[#f7f8fc] p-1 text-sm font-semibold"
               >
                 {(["list", "week"] as const).map((option) => (
                   <button
@@ -591,7 +662,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                     className={`rounded-lg px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-violet-500/40 ${
                       view === option
                         ? "bg-violet-600 text-white"
-                        : "text-slate-400 hover:text-white"
+                        : "text-[#777c91] hover:text-[#171a2b]"
                     }`}
                   >
                     {option === "list" ? "List" : "Week"}
@@ -608,14 +679,14 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                 onChange={(event) => setSearch(event.target.value)}
                 placeholder="Search task or subject..."
                 aria-label="Search tasks"
-                className="min-w-0 rounded-xl border border-white/10 bg-slate-950/70 px-4 py-3 outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20"
+                className="min-w-0 rounded-xl border border-[#e1e3ee] bg-white px-4 py-3 text-[#171a2b] outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20"
               />
 
               <select
                 value={subjectFilter}
                 onChange={(event) => setSubjectFilter(event.target.value)}
                 aria-label="Filter by subject"
-                className="min-w-0 rounded-xl border border-white/10 bg-slate-900/70 px-4 py-3 outline-none focus:border-violet-400"
+                className="min-w-0 rounded-xl border border-[#e1e3ee] bg-white px-4 py-3 text-[#171a2b] outline-none focus:border-violet-400"
               >
                 <option value="All">All subjects</option>
                 {Array.from(new Set([...SUBJECTS, ...tasks.map((task) => task.subject)]))
@@ -629,7 +700,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                 value={filter}
                 onChange={(event) => setFilter(event.target.value)}
                 aria-label="Filter task status"
-                className="min-w-0 rounded-xl border border-white/10 bg-slate-900/70 px-4 py-3 outline-none focus:border-violet-400"
+                className="min-w-0 rounded-xl border border-[#e1e3ee] bg-white px-4 py-3 text-[#171a2b] outline-none focus:border-violet-400"
               >
                 <option value="All">All tasks</option>
                 <option value="Pending">Pending</option>
@@ -669,7 +740,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                   <form
                     key={task.id}
                     onSubmit={saveEdit}
-                    className="space-y-3 rounded-xl border border-violet-400/30 bg-violet-500/10 p-4"
+                    className="space-y-3 rounded-xl border border-violet-200 bg-violet-50 p-4"
                   >
                     <h3 className="font-bold">Edit task</h3>
 
@@ -677,7 +748,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                       value={editTitle}
                       onChange={(event) => setEditTitle(event.target.value)}
                       aria-label="Edit task title"
-                      className="w-full rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2.5 outline-none focus:border-violet-400"
+                      className="w-full rounded-lg border border-[#e1e3ee] bg-white px-3 py-2.5 text-[#171a2b] outline-none focus:border-violet-400"
                       required
                     />
 
@@ -686,7 +757,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                         value={editSubject}
                         onChange={(event) => setEditSubject(event.target.value)}
                         aria-label="Edit subject"
-                        className="min-w-0 rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2.5"
+                        className="min-w-0 rounded-lg border border-[#e1e3ee] bg-white px-3 py-2.5 text-[#171a2b]"
                       >
                         {Array.from(new Set([...SUBJECTS, editSubject])).map((subject) => (
                           <option key={subject} value={subject}>{subject}</option>
@@ -697,7 +768,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                         value={editPriority}
                         onChange={(event) => setEditPriority(event.target.value as Priority)}
                         aria-label="Edit priority"
-                        className="min-w-0 rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2.5"
+                        className="min-w-0 rounded-lg border border-[#e1e3ee] bg-white px-3 py-2.5 text-[#171a2b]"
                       >
                         <option value="Low">Low priority</option>
                         <option value="Medium">Medium priority</option>
@@ -709,7 +780,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                         value={editDeadline}
                         onChange={(event) => setEditDeadline(event.target.value)}
                         aria-label="Edit deadline"
-                        className="min-w-0 rounded-lg border border-white/10 bg-slate-900/70 px-3 py-2.5"
+                        className="min-w-0 rounded-lg border border-[#e1e3ee] bg-white px-3 py-2.5 text-[#171a2b]"
                       />
                     </div>
 
@@ -723,7 +794,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                       <button
                         type="button"
                         onClick={() => setEditingId(null)}
-                        className="rounded-lg border border-white/10 bg-slate-900/70 px-4 py-2 font-semibold hover:bg-slate-950/70"
+                        className="rounded-lg border border-[#e8eaf2] bg-white px-4 py-2 font-semibold hover:bg-white"
                       >
                         Cancel
                       </button>
@@ -735,10 +806,10 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
               return (
                 <article
                   key={task.id}
-                  className={`rounded-xl border p-4 transition hover:shadow-xl shadow-black/10 ${
+                  className={`rounded-xl border p-4 transition hover:shadow-sm ${
                     isOverdue
-                      ? "border-rose-400/20 bg-rose-400/5"
-                      : "border-white/10 bg-slate-900/70"
+                      ? "border-rose-200 bg-rose-50"
+                      : "border-[#e8eaf2] bg-white"
                   }`}
                 >
                   <div className="flex items-start gap-3">
@@ -753,14 +824,14 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                     <div className="min-w-0 flex-1">
                       <p
                         className={`break-words font-semibold ${
-                          task.completed ? "text-slate-500 line-through" : ""
+                          task.completed ? "text-[#777c91] line-through" : ""
                         }`}
                       >
                         {task.title}
                       </p>
 
                       <div className="mt-2 flex flex-wrap items-center gap-2">
-                        <span className="rounded-full bg-violet-500/10 px-2.5 py-1 text-xs font-bold text-violet-200">
+                        <span className="rounded-full bg-violet-50 px-2.5 py-1 text-xs font-bold text-violet-700">
                           {task.subject}
                         </span>
 
@@ -771,30 +842,30 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                         </span>
 
                         {task.deadline && (
-                          <span className="text-xs font-medium text-slate-400">
+                          <span className="text-xs font-medium text-[#777c91]">
                             {task.completed ? "Was due " : "Due "}
                             {formatDeadline(task.deadline)}
                           </span>
                         )}
 
                         {status === "overdue" && (
-                          <span className="rounded-full bg-rose-400/10 px-2.5 py-1 text-xs font-bold text-rose-300 ring-1 ring-inset ring-rose-400/20">
+                          <span className="rounded-full bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-700 ring-1 ring-inset ring-rose-200">
                             Overdue
                           </span>
                         )}
                         {status === "today" && (
-                          <span className="rounded-full bg-amber-400/10 px-2.5 py-1 text-xs font-bold text-amber-300 ring-1 ring-inset ring-amber-400/20">
+                          <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700 ring-1 ring-inset ring-amber-200">
                             Due today
                           </span>
                         )}
                         {status === "soon" && (
-                          <span className="rounded-full bg-sky-400/10 px-2.5 py-1 text-xs font-bold text-sky-300 ring-1 ring-inset ring-sky-400/20">
+                          <span className="rounded-full bg-sky-50 px-2.5 py-1 text-xs font-bold text-sky-700 ring-1 ring-inset ring-sky-200">
                             Due soon
                           </span>
                         )}
 
                         {task.completed && (
-                          <span className="text-xs font-semibold text-emerald-300">
+                          <span className="text-xs font-semibold text-emerald-700">
                             ✓ Completed
                           </span>
                         )}
@@ -806,7 +877,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                         type="button"
                         onClick={() => startEditing(task)}
                         aria-label={`Edit ${task.title}`}
-                        className="rounded-lg px-3 py-2 text-sm font-semibold text-[#6658f5] hover:bg-violet-500/10"
+                        className="rounded-lg px-3 py-2 text-sm font-semibold text-[#6658f5] hover:bg-violet-50"
                       >
                         Edit
                       </button>
@@ -814,7 +885,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                         type="button"
                         onClick={() => deleteTask(task.id)}
                         aria-label={`Delete ${task.title}`}
-                        className="rounded-lg px-3 py-2 text-sm font-semibold text-slate-500 hover:bg-rose-500/10 hover:text-rose-300"
+                        className="rounded-lg px-3 py-2 text-sm font-semibold text-[#777c91] hover:bg-rose-50 hover:text-rose-700"
                       >
                         Delete
                       </button>
@@ -825,9 +896,9 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
             })}
 
             {visibleTasks.length === 0 && (
-              <div className="rounded-xl border border-dashed border-white/15 px-4 py-12 text-center">
+              <div className="rounded-xl border border-dashed border-[#d9dbea] px-4 py-12 text-center">
                 <p className="text-lg font-bold">No matching tasks</p>
-                <p className="mt-1 text-sm text-slate-500">
+                <p className="mt-1 text-sm text-[#777c91]">
                   Try a different search or filter, or add a new study task.
                 </p>
                 <button
@@ -847,7 +918,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
           )}
         </section>
 
-        <footer className="py-8 text-center text-sm text-slate-500">
+        <footer className="py-8 text-center text-sm text-[#777c91]">
           Built step by step · Student Study Planner
         </footer>
       </div>
@@ -926,13 +997,13 @@ function WeeklyCalendar({
             key={dateString}
             className={`min-h-36 rounded-xl border p-3 ${
               dateString === today
-                ? "border-violet-400/40 bg-violet-500/10"
-                : "border-white/10 bg-slate-950/40"
+                ? "border-violet-400/40 bg-violet-50"
+                : "border-[#e8eaf2] bg-white"
             }`}
           >
             <h3 className="font-bold">
               {date.toLocaleDateString(undefined, { weekday: "short" })}
-              <span className="ml-2 text-sm font-medium text-slate-400">
+              <span className="ml-2 text-sm font-medium text-[#777c91]">
                 {date.toLocaleDateString(undefined, { month: "short", day: "numeric" })}
               </span>
             </h3>
@@ -942,17 +1013,17 @@ function WeeklyCalendar({
                   key={task.id}
                   type="button"
                   onClick={() => onEditTask(task)}
-                  className={`block w-full rounded-lg border border-white/10 px-2.5 py-2 text-left text-xs hover:border-violet-400/40 ${
-                    task.completed ? "text-slate-500 line-through" : "text-slate-200"
+                  className={`block w-full rounded-lg border border-[#e8eaf2] px-2.5 py-2 text-left text-xs hover:border-violet-400/40 ${
+                    task.completed ? "text-[#777c91] line-through" : "text-[#171a2b]"
                   }`}
                   title="Edit task"
                 >
                   <span className="block truncate font-semibold">{task.title}</span>
-                  <span className="mt-1 block truncate text-slate-400">{task.subject}</span>
+                  <span className="mt-1 block truncate text-[#777c91]">{task.subject}</span>
                 </button>
               ))}
               {dayTasks.length === 0 && (
-                <p className="pt-2 text-xs text-slate-600">No tasks due</p>
+                <p className="pt-2 text-xs text-[#969aab]">No tasks due</p>
               )}
             </div>
           </section>
