@@ -3,20 +3,63 @@
 
 :root {
   color-scheme: light;
-  --background: #f7f8fc;
-  --foreground: #171a2b;
-  --muted: #777c91;
-  --surface: #ffffff;
-  --border: #e8eaf2;
-  --primary: #6658f5;
-  --primary-dark: #5143dc;
-  --lime: #c8f169;
-  --coral: #ffad91;
-  --font-sans: Arial, Helvetica, sans-serif;
+
+  /* Base neumorphic surface — a single soft grey so light/dark shadows read */
+  --bg: #e8eaed;
+  --bg-surface: #e8eaed;
+
+  /* Foreground / text */
+  --foreground: #2d3436;
+  --foreground-strong: #1e2224;
+  --muted: #6c7a89;
+  --muted-soft: #95a5a9;
+
+  /* Borders (subtle, same hue as surface) */
+  --border: #d1d5da;
+
+  /* Surfaces */
+  --surface: #e8eaed;
+  --surface-raised: #e8eaed;
+  --surface-inset: #e8eaed;
+
+  /* Primary accent — sophisticated indigo */
+  --primary: #5b5bf5;
+  --primary-hover: #4a4ae0;
+  --primary-soft: #eef0fd;
+
+  /* Semantic colours */
+  --success: #2ecc71;
+  --success-soft: #e9f7ee;
+  --warning: #f39c12;
+  --warning-soft: #fdf3e0;
+  --danger: #e74c3c;
+  --danger-soft: #fdecea;
+
+  /* Neumorphism shadow colours */
+  --shadow-light: #ffffff;
+  --shadow-dark: #afb9c7;
+
+  /* Typography */
+  --font-sans: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    monospace;
+
+  /* Radius & spacing */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.875rem;
+  --radius-lg: 1.25rem;
+  --radius-xl: 1.75rem;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 150ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  --transition-base: 220ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  --transition-smooth: 350ms cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
 @theme inline {
-  --color-background: var(--background);
+  --color-background: var(--bg);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -28,23 +71,18 @@
 
 html {
   scroll-behavior: smooth;
-  background: var(--background);
+  background: var(--bg);
 }
 
 body {
   min-height: 100vh;
   margin: 0;
-  background:
-    radial-gradient(
-      ellipse at 10% 0%,
-      rgba(102, 88, 245, 0.07),
-      transparent 35%
-    ),
-    var(--background);
+  background: var(--bg);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  line-height: 1.5;
 }
 
 button,
@@ -63,17 +101,18 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 3px solid rgba(102, 88, 245, 0.45);
+  outline: 3px solid rgba(91, 91, 245, 0.45);
   outline-offset: 3px;
+  border-radius: var(--radius-sm);
 }
 
 ::selection {
-  color: #171a2b;
-  background: rgba(200, 241, 105, 0.8);
+  color: #ffffff;
+  background: var(--primary);
 }
 
 ::placeholder {
-  color: #969aab;
+  color: var(--muted-soft);
   opacity: 1;
 }
 
@@ -83,49 +122,334 @@ input,
 select,
 textarea {
   transition:
-    background-color 180ms ease,
-    border-color 180ms ease,
-    color 180ms ease,
-    box-shadow 180ms ease,
-    transform 180ms ease;
+    background-color var(--transition-base),
+    border-color var(--transition-base),
+    color var(--transition-base),
+    box-shadow var(--transition-base),
+    transform var(--transition-base);
 }
 
-@keyframes rise-in {
-  from {
-    opacity: 0;
-    transform: translateY(12px);
+/* ==========================================================================
+   Neumorphism primitives
+   ========================================================================== */
+
+/* Convex surface — appears to lift off the page */
+.neumorphic-raised {
+  background: var(--surface-raised);
+  border-radius: var(--radius-lg);
+  box-shadow:
+    10px 10px 20px var(--shadow-dark),
+    -10px -10px 20px var(--shadow-light);
+}
+
+/* Concave / pressed surface — appears to sink into the page */
+.neumorphic-inset {
+  background: var(--surface-inset);
+  border-radius: var(--radius-lg);
+  box-shadow: inset
+    8px 8px 16px var(--shadow-dark),
+    inset -8px -8px 16px var(--shadow-light);
+}
+
+/* Raised card with softer shadow for containers */
+.neumorphic-card {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  box-shadow:
+    12px 12px 24px var(--shadow-dark),
+    -12px -12px 24px var(--shadow-light);
+  border: 1px solid var(--border);
+}
+
+/* Tactile button — raised by default, presses in on active */
+.neumorphic-btn {
+  background: var(--surface);
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow:
+    6px 6px 12px var(--shadow-dark),
+    -6px -6px 12px var(--shadow-light);
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.neumorphic-btn:hover {
+  box-shadow:
+    8px 8px 16px var(--shadow-dark),
+    -8px -8px 16px var(--shadow-light);
+  transform: translateY(-1px);
+}
+
+.neumorphic-btn:active {
+  box-shadow: inset
+    6px 6px 12px var(--shadow-dark),
+    inset -6px -6px 12px var(--shadow-light);
+  transform: scale(0.98);
+}
+
+.neumorphic-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow:
+    4px 4px 8px var(--shadow-dark),
+    -4px -4px 8px var(--shadow-light);
+}
+
+/* Primary accent button — indigo, tactile */
+.neumorphic-btn-primary {
+  background: var(--primary);
+  color: #ffffff;
+  border-radius: var(--radius-lg);
+  box-shadow:
+    6px 6px 12px rgba(40, 40, 140, 0.35),
+    -6px -6px 12px rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+.neumorphic-btn-primary:hover {
+  background: var(--primary-hover);
+  box-shadow:
+    8px 8px 16px rgba(40, 40, 140, 0.4),
+    -8px -8px 16px rgba(255, 255, 255, 0.75);
+  transform: translateY(-1px);
+}
+
+.neumorphic-btn-primary:active {
+  box-shadow: inset
+    6px 6px 12px rgba(40, 40, 140, 0.45),
+    inset -6px -6px 12px rgba(255, 255, 255, 0.6);
+  transform: scale(0.98);
+}
+
+.neumorphic-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Ghost / text button — no shadow, tinted on hover */
+.neumorphic-btn-ghost {
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md);
+  color: var(--primary);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.neumorphic-btn-ghost:hover {
+  background: var(--primary-soft);
+}
+
+.neumorphic-btn-ghost:active {
+  background: #e2e4f4;
+  transform: scale(0.97);
+}
+
+/* Inset input field */
+.neumorphic-input {
+  background: var(--surface);
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: inset
+    6px 6px 12px var(--shadow-dark),
+    inset -6px -6px 12px var(--shadow-light);
+  color: var(--foreground-strong);
+}
+
+.neumorphic-input:focus {
+  box-shadow: inset
+    6px 6px 12px var(--shadow-dark),
+    inset -6px -6px 12px var(--shadow-light),
+    0 0 0 3px rgba(91, 91, 245, 0.35);
+  outline: none;
+}
+
+.neumorphic-input::placeholder {
+  color: var(--muted-soft);
+}
+
+/* Inset select */
+.neumorphic-select {
+  background: var(--surface);
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: inset
+    6px 6px 12px var(--shadow-dark),
+    inset -6px -6px 12px var(--shadow-light);
+  color: var(--foreground-strong);
+  appearance: none;
+  background-image: none;
+}
+
+.neumorphic-select:focus {
+  box-shadow: inset
+    6px 6px 12px var(--shadow-dark),
+    inset -6px -6px 12px var(--shadow-light),
+    0 0 0 3px rgba(91, 91, 245, 0.35);
+  outline: none;
+}
+
+/* Inset textarea */
+.neumorphic-textarea {
+  background: var(--surface);
+  border: none;
+  border-radius: var(--radius-lg);
+  box-shadow: inset
+    6px 6px 12px var(--shadow-dark),
+    inset -6px -6px 12px var(--shadow-light);
+  color: var(--foreground-strong);
+  resize: vertical;
+}
+
+.neumorphic-textarea:focus {
+  box-shadow: inset
+    6px 6px 12px var(--shadow-dark),
+    inset -6px -6px 12px var(--shadow-light),
+    0 0 0 3px rgba(91, 91, 245, 0.35);
+  outline: none;
+}
+
+/* Raised toggle / chip */
+.neumorphic-chip {
+  background: var(--surface);
+  border-radius: var(--radius-full);
+  box-shadow:
+    4px 4px 8px var(--shadow-dark),
+    -4px -4px 8px var(--shadow-light);
+}
+
+/* Segmented control (view toggle) */
+.neumorphic-segment {
+  display: inline-flex;
+  background: var(--surface);
+  border-radius: var(--radius-full);
+  box-shadow:
+    4px 4px 8px var(--shadow-dark),
+    -4px -4px 8px var(--shadow-light);
+}
+
+.neumorphic-segment-item {
+  border-radius: var(--radius-full);
+  border: none;
+  background: transparent;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.55rem 1.1rem;
+  cursor: pointer;
+}
+
+.neumorphic-segment-item:hover {
+  color: var(--foreground-strong);
+}
+
+.neumorphic-segment-item.active {
+  background: var(--surface-inset);
+  color: var(--primary);
+  box-shadow: inset
+    4px 4px 8px var(--shadow-dark),
+    inset -4px -4px 8px var(--shadow-light);
+}
+
+/* Raised pill badge */
+.neumorphic-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.7rem;
+  box-shadow:
+    3px 3px 6px var(--shadow-dark),
+    -3px -3px 6px var(--shadow-light);
+}
+
+/* Divider */
+.neumorphic-divider {
+  height: 1px;
+  background: var(--border);
+  border: none;
+  margin: 1.25rem 0;
+}
+
+/* Soft page background wrapper */
+.neumorphic-page {
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* Section heading style */
+.neumorphic-heading {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--foreground-strong);
+  margin: 0 0 0.5rem 0;
+}
+
+.neumorphic-subheading {
+  font-size: 0.875rem;
+  color: var(--muted);
+  margin: 0 0 1.25rem 0;
+}
+
+/* Stat value */
+.neumorphic-stat-value {
+  font-size: 2.5rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  color: var(--foreground-strong);
+}
+
+/* Progress track */
+.neumorphic-progress-track {
+  height: 8px;
+  width: 100%;
+  background: #d7dbe0;
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  box-shadow: inset
+    2px 2px 4px rgba(0, 0, 0, 0.08),
+    inset -2px -2px 4px rgba(255, 255, 255, 0.7);
+}
+
+.neumorphic-progress-bar {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--primary);
+  box-shadow: 0 2px 6px rgba(91, 91, 245, 0.35);
+  transition: width var(--transition-smooth);
+}
+
+/* Semantic colour chips */
+.priority-low {
+  color: #2ecc71;
+}
+.priority-medium {
+  color: #f39c12;
+}
+.priority-high {
+  color: #e74c3c;
+}
+
+/* Responsive refinements */
+@media (max-width: 640px) {
+  .neumorphic-card,
+  .neumorphic-raised {
+    border-radius: var(--radius-md);
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  .neumorphic-btn,
+  .neumorphic-btn-primary {
+    border-radius: var(--radius-md);
   }
-}
-
-@keyframes progress-fill {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
-}
-
-.animate-rise-in {
-  animation: rise-in 550ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
-}
-
-.animate-progress-fill {
-  transform-origin: left;
-  animation: progress-fill 900ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+  .neumorphic-input,
+  .neumorphic-select,
+  .neumorphic-textarea {
+    border-radius: var(--radius-md);
   }
 }

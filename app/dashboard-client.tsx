@@ -434,42 +434,42 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
 
   if (authChecking) {
     return (
-      <main className="flex min-h-screen items-center justify-center bg-[#f7f8fc] text-[#171a2b]">
+      <main className="neumorphic-page flex min-h-screen items-center justify-center text-[#2d3436]">
         Checking your session...
       </main>
     );
 }
   return (
-    <main className="min-h-screen bg-[#f7f8fc] text-[#171a2b]">
+    <main className="neumorphic-page min-h-screen text-[#2d3436]">
       <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-        <header className="mb-8 flex flex-col gap-5 rounded-[2rem] border border-[#e8eaf2] bg-white p-6 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-8">
+        <header className="mb-8 neumorphic-card flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between p-8">
           <div>
-            <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.24em] text-[#6658f5]">
+            <p className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.24em] text-[#5b5bf5]">
               ✦ STUDENT WORKSPACE
             </p>
-            <h1 className="mt-3 text-3xl font-black tracking-tight sm:text-5xl">
-              My Study Planner<span className="text-[#171a2b]">.</span>
+            <h1 className="mt-3 text-3xl font-black tracking-tight text-[#1e2224] sm:text-5xl">
+              My Study Planner<span className="text-[#1e2224]">.</span>
             </h1>
-            <p className="mt-2 text-[#777c91]">
-              Organize your subjects. Prioritize your work. Track your progress.
+            <p className="mt-2 text-sm text-[#6c7a89]">
+              Organise your subjects. Prioritise your work. Track your progress.
             </p>
           </div>
 
-          <div className="rounded-2xl border border-[#e8eaf2] bg-white px-5 py-4 shadow-sm">
-            <p className="text-xs font-semibold uppercase tracking-wider text-[#777c91]">
+          <div className="neumorphic-card rounded-[2rem] px-5 py-4">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[#6c7a89]">
               TODAY
             </p>
-            <p className="mt-1 font-bold">
+            <p className="mt-1 font-bold text-[#1e2224]">
               {today ? formatDeadline(today) : "Loading date..."}
             </p>
-            <div className="mt-3 flex items-center justify-between gap-3 border-t border-[#e8eaf2] pt-3">
-              <p className="min-w-0 truncate text-xs text-[#777c91]" title={userEmail}>
+            <div className="mt-3 flex items-center justify-between gap-3 pt-3">
+              <p className="min-w-0 truncate text-sm text-[#6c7a89]" title={userEmail}>
                 {userEmail}
               </p>
               <button
                 type="button"
                 onClick={handleLogout}
-                className="shrink-0 rounded-lg border border-[#e8eaf2] px-3 py-1.5 text-xs font-semibold hover:bg-[#f7f8fc]"
+                className="neumorphic-btn shrink-0 px-3 py-1.5 text-xs font-semibold"
               >
                 Log out
               </button>
@@ -480,13 +480,13 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
         {taskError && (
           <div
             role="alert"
-            className="mb-6 flex items-start justify-between gap-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700"
+            className="mb-6 neumorphic-inset rounded-[2rem] p-4 text-sm text-[#e74c3c] font-medium border border-transparent"
           >
             <p>{taskError}</p>
             <button
               type="button"
               onClick={() => setTaskError("")}
-              className="shrink-0 font-semibold hover:text-[#171a2b]"
+              className="shrink-0 font-semibold text-[#1e2224] ml-4 hover:opacity-80"
             >
               Dismiss
             </button>
@@ -495,23 +495,33 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
 
         <section className="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
           <StatCard label="Total tasks" value={tasks.length} detail="All study tasks" />
-          <StatCard label="Completed" value={completedCount} detail={`${progress}% overall progress`} />
-          <StatCard label="Pending" value={pendingCount} detail={`${dueTodayCount} due today · ${dueSoonCount} due soon`} />
-          <StatCard label="Overdue" value={overdueCount} detail="Past deadline, included in Pending" />
+          <StatCard
+            label="Completed"
+            value={completedCount}
+            detail={`${progress}% overall progress`}
+          />
+          <StatCard
+            label="Pending"
+            value={pendingCount}
+            detail={`${dueTodayCount} due today · ${dueSoonCount} due soon`}
+          />
+          <StatCard
+            label="Overdue"
+            value={overdueCount}
+            detail="Past deadline, included in Pending"
+          />
         </section>
 
-        <section className="mb-6 overflow-hidden rounded-3xl border border-[#e8eaf2] bg-white p-5 shadow-sm sm:p-6">
+        <section className="mb-6 neumorphic-card overflow-hidden p-5 sm:p-6">
           <div className="mb-4 flex items-center justify-between gap-4">
             <div>
-              <h2 className="text-lg font-bold">Your progress</h2>
-              <p className="mt-1 text-sm text-[#777c91]">
-                Small steps lead to big results.
-              </p>
+              <h2 className="neumorphic-heading">Your progress</h2>
+              <p className="neumorphic-subheading">Small steps lead to big results.</p>
             </div>
-            <span className="text-2xl font-black text-[#6658f0]">{progress}%</span>
+            <span className="text-3xl font-black text-[#5b5bf5]">{progress}%</span>
           </div>
           <div
-            className="h-4 overflow-hidden rounded-full bg-[#f0efff] ring-1 ring-inset ring-[#e8eaf2]"
+            className="h-3 overflow-hidden rounded-full bg-[#d7dbe0] shadow-[inset_2px_2px_4px_rgba(0,0,0,0.08),inset_-2px_-2px_4px_rgba(255,255,255,0.7)]"
             role="progressbar"
             aria-valuenow={progress}
             aria-valuemin={0}
@@ -519,65 +529,111 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
             aria-label="Study task completion"
           >
             <div
-              className="animate-progress-fill relative h-full rounded-full bg-gradient-to-r from-[#6658f5] via-[#8b7cff] to-[#c8f169] transition-all duration-700 ease-out"
+              className="animate-progress-fill relative h-full rounded-full neumorphic-progress-bar"
               style={{ width: `${progress}%` }}
             />
           </div>
         </section>
 
         <section className="mb-6 grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-          <div className="rounded-3xl border border-[#e8eaf2] bg-white p-5 shadow-sm sm:p-6">
+          <div className="neumorphic-card p-5 sm:p-6">
             <div className="mb-5 flex items-start justify-between gap-3">
               <div>
-                <h2 className="text-lg font-bold text-[#171a2b]">Subject analytics</h2>
-                <p className="mt-1 text-sm text-[#777c91]">Progress calculated from your saved tasks.</p>
+                <h2 className="neumorphic-heading">Subject analytics</h2>
+                <p className="neumorphic-subheading">
+                  Progress calculated from your saved tasks.
+                </p>
               </div>
-              <span className="rounded-xl bg-violet-50 px-3 py-2 text-xs font-bold text-violet-700">{subjectAnalytics.length} subjects</span>
+              <span className="neumorphic-badge text-[#5b5bf5]">
+                {subjectAnalytics.length} subjects
+              </span>
             </div>
             {subjectAnalytics.length ? (
               <div className="space-y-4">
                 {subjectAnalytics.map((item) => (
                   <div key={item.subject}>
                     <div className="mb-2 flex items-center justify-between gap-3 text-sm">
-                      <span className="truncate font-semibold text-[#34364a]">{item.subject}</span>
-                      <span className="shrink-0 text-xs font-semibold text-[#777c91]">{item.completed}/{item.total} · {item.percent}%</span>
+                      <span className="truncate font-semibold text-[#1e2224]">
+                        {item.subject}
+                      </span>
+                      <span className="shrink-0 text-xs font-semibold text-[#6c7a89]">
+                        {item.completed}/{item.total} · {item.percent}%
+                      </span>
                     </div>
-                    <div className="h-2.5 overflow-hidden rounded-full bg-[#f0efff]">
-                      <div className="h-full rounded-full bg-gradient-to-r from-[#6658f5] to-[#a69cff] transition-all duration-700" style={{ width: `${item.percent}%` }} />
+                    <div className="h-2.5 overflow-hidden rounded-full bg-[#d7dbe0]">
+                      <div
+                        className="h-full rounded-full neumorphic-progress-bar"
+                        style={{ width: `${item.percent}%` }}
+                      />
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="rounded-2xl border border-dashed border-[#d9dbea] px-4 py-8 text-center">
-                <p className="font-semibold text-[#34364a]">Your analytics will appear here</p>
-                <p className="mt-1 text-sm text-[#777c91]">Add a few tasks to see progress by subject.</p>
+              <div className="neumorphic-inset rounded-[2rem] px-4 py-8 text-center">
+                <p className="font-semibold text-[#1e2224]">
+                  Your analytics will appear here
+                </p>
+                <p className="mt-1 text-sm text-[#6c7a89]">
+                  Add a few tasks to see progress by subject.
+                </p>
               </div>
             )}
           </div>
-          <div className="rounded-3xl border border-[#e8eaf2] bg-white p-5 shadow-sm sm:p-6">
-            <h2 className="text-lg font-bold text-[#171a2b]">Focus overview</h2>
-            <p className="mt-1 text-sm text-[#777c91]">What needs your attention next.</p>
+          <div className="neumorphic-card p-5 sm:p-6">
+            <h2 className="neumorphic-heading">Focus overview</h2>
+            <p className="neumorphic-subheading">
+              What needs your attention next.
+            </p>
             <div className="mt-5 space-y-3">
-              <div className="flex items-center justify-between rounded-2xl bg-rose-50 px-4 py-3">
-                <div><p className="text-sm font-semibold text-rose-800">High-priority pending</p><p className="mt-0.5 text-xs text-rose-700">Important tasks not finished</p></div>
-                <span className="text-2xl font-black text-rose-700">{highPriorityPending}</span>
+              <div className="neumorphic-card p-4 border border-transparent">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-[#d3546f]">
+                      High-priority pending
+                    </p>
+                    <p className="mt-0.5 text-xs text-[#6c7a89]">
+                      Important tasks not finished
+                    </p>
+                  </div>
+                  <span className="text-2xl font-black text-[#d3546f]">
+                    {highPriorityPending}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center justify-between rounded-2xl bg-amber-50 px-4 py-3">
-                <div><p className="text-sm font-semibold text-amber-800">Due today</p><p className="mt-0.5 text-xs text-amber-700">Tasks with today's deadline</p></div>
-                <span className="text-2xl font-black text-amber-700">{dueTodayCount}</span>
+              <div className="neumorphic-card p-4 border border-transparent">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-[#b8860b]">Due today</p>
+                    <p className="mt-0.5 text-xs text-[#6c7a89]">
+                      Tasks with today's deadline
+                    </p>
+                  </div>
+                  <span className="text-2xl font-black text-[#b8860b]">
+                    {dueTodayCount}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center justify-between rounded-2xl bg-violet-50 px-4 py-3">
-                <div><p className="text-sm font-semibold text-violet-800">Overdue</p><p className="mt-0.5 text-xs text-violet-700">Pending tasks past deadline</p></div>
-                <span className="text-2xl font-black text-violet-700">{overdueCount}</span>
+              <div className="neumorphic-card p-4 border border-transparent">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-semibold text-[#8e44ad]">Overdue</p>
+                    <p className="mt-0.5 text-xs text-[#6c7a89]">
+                      Pending tasks past deadline
+                    </p>
+                  </div>
+                  <span className="text-2xl font-black text-[#8e44ad]">
+                    {overdueCount}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        <section className="mb-6 rounded-3xl border border-[#e8eaf2] bg-white p-5 shadow-sm sm:p-6">
-          <h2 className="text-lg font-bold">Add a study task</h2>
-          <p className="mt-1 text-sm text-[#777c91]">
+        <section className="mb-6 neumorphic-card p-5 sm:p-6">
+          <h2 className="neumorphic-heading">Add a study task</h2>
+          <p className="neumorphic-subheading">
             Choose a subject, priority, and optional deadline.
           </p>
 
@@ -591,7 +647,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
               onChange={(event) => setNewTask(event.target.value)}
               placeholder="What do you need to study?"
               aria-label="Task title"
-              className="min-w-0 rounded-xl border border-[#e8eaf2] bg-white px-4 py-3 text-[#171a2b] outline-none transition placeholder:text-[#969aab] focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20 sm:col-span-2 lg:col-span-1"
+              className="neumorphic-input w-full min-w-0 px-4 py-3 text-sm sm:col-span-2 lg:col-span-1"
               required
             />
 
@@ -599,7 +655,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
               value={newSubject}
               onChange={(event) => setNewSubject(event.target.value)}
               aria-label="Task subject"
-              className="min-w-0 rounded-xl border border-[#e1e3ee] bg-white px-4 py-3 text-[#171a2b] outline-none focus:border-violet-400"
+              className="neumorphic-select w-full min-w-0 px-4 py-3 text-sm"
             >
               {SUBJECTS.map((subject) => (
                 <option key={subject} value={subject}>{subject}</option>
@@ -610,7 +666,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
               value={newPriority}
               onChange={(event) => setNewPriority(event.target.value as Priority)}
               aria-label="Task priority"
-              className="min-w-0 rounded-xl border border-[#e1e3ee] bg-white px-4 py-3 text-[#171a2b] outline-none focus:border-violet-400"
+              className="neumorphic-select w-full min-w-0 px-4 py-3 text-sm"
             >
               <option value="Low">Low priority</option>
               <option value="Medium">Medium priority</option>
@@ -623,25 +679,25 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
               min={today || undefined}
               onChange={(event) => setNewDeadline(event.target.value)}
               aria-label="Task deadline"
-              className="min-w-0 rounded-xl border border-[#e1e3ee] bg-white px-4 py-3 text-[#171a2b] outline-none focus:border-violet-400"
+              className="neumorphic-input w-full min-w-0 px-4 py-3 text-sm"
             />
 
             <button
               type="submit"
               disabled={taskSyncing}
-              className="rounded-xl bg-violet-600 px-5 py-3 font-bold text-white transition hover:bg-violet-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+              className="neumorphic-btn-primary w-full min-w-0 px-5 py-3 font-bold text-sm"
             >
               {taskSyncing ? "Adding..." : "+ Add task"}
             </button>
           </form>
         </section>
 
-        <section className="rounded-2xl border border-[#e8eaf2] bg-white p-5 shadow-sm sm:p-6">
+        <section className="mb-6 neumorphic-card p-5 sm:p-6">
           <div className="flex flex-col gap-4">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
-                <h2 className="text-xl font-bold">Your tasks</h2>
-                <p className="mt-1 text-sm text-[#777c91]">
+                <h2 className="neumorphic-heading">Your tasks</h2>
+                <p className="neumorphic-subheading">
                   {view === "list"
                     ? "Search, filter, edit, and manage your study plan."
                     : "See what is due each day of the week."}
@@ -651,7 +707,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
               <div
                 role="group"
                 aria-label="Task view"
-                className="inline-flex rounded-xl border border-[#e8eaf2] bg-[#f7f8fc] p-1 text-sm font-semibold"
+                className="neumorphic-segment inline-flex text-sm font-semibold"
               >
                 {(["list", "week"] as const).map((option) => (
                   <button
@@ -659,10 +715,8 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                     type="button"
                     onClick={() => setView(option)}
                     aria-pressed={view === option}
-                    className={`rounded-lg px-4 py-1.5 transition focus:outline-none focus:ring-2 focus:ring-violet-500/40 ${
-                      view === option
-                        ? "bg-violet-600 text-white"
-                        : "text-[#777c91] hover:text-[#171a2b]"
+                    className={`neumorphic-segment-item transition focus:outline-none focus:ring-2 focus:ring-[#5b5bf5]/40 ${
+                      view === option ? "active" : "text-[#6c7a89] hover:text-[#1e2224]"
                     }`}
                   >
                     {option === "list" ? "List" : "Week"}
@@ -672,45 +726,47 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
             </div>
 
             {view === "list" && (
-            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              <input
-                type="search"
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                placeholder="Search task or subject..."
-                aria-label="Search tasks"
-                className="min-w-0 rounded-xl border border-[#e1e3ee] bg-white px-4 py-3 text-[#171a2b] outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-500/20"
-              />
+              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                <input
+                  type="search"
+                  value={search}
+                  onChange={(event) => setSearch(event.target.value)}
+                  placeholder="Search task or subject..."
+                  aria-label="Search tasks"
+                  className="neumorphic-input w-full min-w-0 px-4 py-3 text-sm"
+                />
 
-              <select
-                value={subjectFilter}
-                onChange={(event) => setSubjectFilter(event.target.value)}
-                aria-label="Filter by subject"
-                className="min-w-0 rounded-xl border border-[#e1e3ee] bg-white px-4 py-3 text-[#171a2b] outline-none focus:border-violet-400"
-              >
-                <option value="All">All subjects</option>
-                {Array.from(new Set([...SUBJECTS, ...tasks.map((task) => task.subject)]))
-                  .filter((subject) => subject !== "All")
-                  .map((subject) => (
-                    <option key={subject} value={subject}>{subject}</option>
-                  ))}
-              </select>
+                <select
+                  value={subjectFilter}
+                  onChange={(event) => setSubjectFilter(event.target.value)}
+                  aria-label="Filter by subject"
+                  className="neumorphic-select w-full min-w-0 px-4 py-3 text-sm"
+                >
+                  <option value="All">All subjects</option>
+                  {Array.from(
+                    new Set([...SUBJECTS, ...tasks.map((task) => task.subject)])
+                  )
+                    .filter((subject) => subject !== "All")
+                    .map((subject) => (
+                      <option key={subject} value={subject}>{subject}</option>
+                    ))}
+                </select>
 
-              <select
-                value={filter}
-                onChange={(event) => setFilter(event.target.value)}
-                aria-label="Filter task status"
-                className="min-w-0 rounded-xl border border-[#e1e3ee] bg-white px-4 py-3 text-[#171a2b] outline-none focus:border-violet-400"
-              >
-                <option value="All">All tasks</option>
-                <option value="Pending">Pending</option>
-                <option value="Completed">Completed</option>
-                <option value="High">High priority</option>
-                <option value="Overdue">Overdue</option>
-                <option value="Today">Due today</option>
-                <option value="Soon">Due soon</option>
-              </select>
-            </div>
+                <select
+                  value={filter}
+                  onChange={(event) => setFilter(event.target.value)}
+                  aria-label="Filter task status"
+                  className="neumorphic-select w-full min-w-0 px-4 py-3 text-sm"
+                >
+                  <option value="All">All tasks</option>
+                  <option value="Pending">Pending</option>
+                  <option value="Completed">Completed</option>
+                  <option value="High">High priority</option>
+                  <option value="Overdue">Overdue</option>
+                  <option value="Today">Due today</option>
+                  <option value="Soon">Due soon</option>
+                </select>
+              </div>
             )}
           </div>
 
@@ -730,154 +786,160 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
           )}
 
           {view === "list" && (
-          <div className="mt-5 space-y-3">
-            {visibleTasks.map((task) => {
-              const status = getDeadlineStatus(task, today);
-              const isOverdue = status === "overdue";
+            <div className="mt-5 space-y-3">
+              {visibleTasks.map((task) => {
+                const status = getDeadlineStatus(task, today);
+                const isOverdue = status === "overdue";
 
-              if (editingId === task.id) {
-                return (
-                  <form
-                    key={task.id}
-                    onSubmit={saveEdit}
-                    className="space-y-3 rounded-xl border border-violet-200 bg-violet-50 p-4"
-                  >
-                    <h3 className="font-bold">Edit task</h3>
-
-                    <input
-                      value={editTitle}
-                      onChange={(event) => setEditTitle(event.target.value)}
-                      aria-label="Edit task title"
-                      className="w-full rounded-lg border border-[#e1e3ee] bg-white px-3 py-2.5 text-[#171a2b] outline-none focus:border-violet-400"
-                      required
-                    />
-
-                    <div className="grid gap-3 sm:grid-cols-3">
-                      <select
-                        value={editSubject}
-                        onChange={(event) => setEditSubject(event.target.value)}
-                        aria-label="Edit subject"
-                        className="min-w-0 rounded-lg border border-[#e1e3ee] bg-white px-3 py-2.5 text-[#171a2b]"
-                      >
-                        {Array.from(new Set([...SUBJECTS, editSubject])).map((subject) => (
-                          <option key={subject} value={subject}>{subject}</option>
-                        ))}
-                      </select>
-
-                      <select
-                        value={editPriority}
-                        onChange={(event) => setEditPriority(event.target.value as Priority)}
-                        aria-label="Edit priority"
-                        className="min-w-0 rounded-lg border border-[#e1e3ee] bg-white px-3 py-2.5 text-[#171a2b]"
-                      >
-                        <option value="Low">Low priority</option>
-                        <option value="Medium">Medium priority</option>
-                        <option value="High">High priority</option>
-                      </select>
+                if (editingId === task.id) {
+                  return (
+                    <form
+                      key={task.id}
+                      onSubmit={saveEdit}
+                      className="space-y-3 rounded-[2rem] neumorphic-inset p-4 sm:p-5"
+                    >
+                      <h3 className="neumorphic-heading">Edit task</h3>
 
                       <input
-                        type="date"
-                        value={editDeadline}
-                        onChange={(event) => setEditDeadline(event.target.value)}
-                        aria-label="Edit deadline"
-                        className="min-w-0 rounded-lg border border-[#e1e3ee] bg-white px-3 py-2.5 text-[#171a2b]"
+                        value={editTitle}
+                        onChange={(event) => setEditTitle(event.target.value)}
+                        aria-label="Edit task title"
+                        className="neumorphic-input w-full min-w-0 px-4 py-3 text-sm"
+                        required
                       />
-                    </div>
 
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        type="submit"
-                        className="rounded-lg bg-violet-600 px-4 py-2 font-semibold text-white hover:bg-violet-500"
-                      >
-                        Save changes
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setEditingId(null)}
-                        className="rounded-lg border border-[#e8eaf2] bg-white px-4 py-2 font-semibold hover:bg-white"
-                      >
-                        Cancel
-                      </button>
-                    </div>
-                  </form>
-                );
-              }
-
-              return (
-                <article
-                  key={task.id}
-                  className={`rounded-xl border p-4 transition hover:shadow-sm ${
-                    isOverdue
-                      ? "border-rose-200 bg-rose-50"
-                      : "border-[#e8eaf2] bg-white"
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <input
-                      type="checkbox"
-                      checked={task.completed}
-                      onChange={() => toggleTask(task.id)}
-                      aria-label={`Mark ${task.title} as completed`}
-                      className="mt-1 h-5 w-5 shrink-0 cursor-pointer accent-indigo-600"
-                    />
-
-                    <div className="min-w-0 flex-1">
-                      <p
-                        className={`break-words font-semibold ${
-                          task.completed ? "text-[#777c91] line-through" : ""
-                        }`}
-                      >
-                        {task.title}
-                      </p>
-
-                      <div className="mt-2 flex flex-wrap items-center gap-2">
-                        <span className="rounded-full bg-violet-50 px-2.5 py-1 text-xs font-bold text-violet-700">
-                          {task.subject}
-                        </span>
-
-                        <span
-                          className={`rounded-full px-2.5 py-1 text-xs font-bold ring-1 ring-inset ${priorityStyles[task.priority]}`}
+                      <div className="grid gap-3 sm:grid-cols-3">
+                        <select
+                          value={editSubject}
+                          onChange={(event) => setEditSubject(event.target.value)}
+                          aria-label="Edit subject"
+                          className="neumorphic-select w-full min-w-0 px-4 py-3 text-sm"
                         >
-                          {task.priority} priority
-                        </span>
+                          {Array.from(
+                            new Set([...SUBJECTS, editSubject])
+                          ).map((subject) => (
+                            <option key={subject} value={subject}>
+                              {subject}
+                            </option>
+                          ))}
+                        </select>
 
-                        {task.deadline && (
-                          <span className="text-xs font-medium text-[#777c91]">
-                            {task.completed ? "Was due " : "Due "}
-                            {formatDeadline(task.deadline)}
-                          </span>
-                        )}
+                        <select
+                          value={editPriority}
+                          onChange={(event) =>
+                            setEditPriority(event.target.value as Priority)
+                          }
+                          aria-label="Edit priority"
+                          className="neumorphic-select w-full min-w-0 px-4 py-3 text-sm"
+                        >
+                          <option value="Low">Low priority</option>
+                          <option value="Medium">Medium priority</option>
+                          <option value="High">High priority</option>
+                        </select>
 
-                        {status === "overdue" && (
-                          <span className="rounded-full bg-rose-50 px-2.5 py-1 text-xs font-bold text-rose-700 ring-1 ring-inset ring-rose-200">
-                            Overdue
-                          </span>
-                        )}
-                        {status === "today" && (
-                          <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-bold text-amber-700 ring-1 ring-inset ring-amber-200">
-                            Due today
-                          </span>
-                        )}
-                        {status === "soon" && (
-                          <span className="rounded-full bg-sky-50 px-2.5 py-1 text-xs font-bold text-sky-700 ring-1 ring-inset ring-sky-200">
-                            Due soon
-                          </span>
-                        )}
-
-                        {task.completed && (
-                          <span className="text-xs font-semibold text-emerald-700">
-                            ✓ Completed
-                          </span>
-                        )}
+                        <input
+                          type="date"
+                          value={editDeadline}
+                          onChange={(event) => setEditDeadline(event.target.value)}
+                          aria-label="Edit deadline"
+                          className="neumorphic-input w-full min-w-0 px-4 py-3 text-sm"
+                        />
                       </div>
-                    </div>
 
-                    <div className="flex shrink-0 flex-col gap-1 sm:flex-row">
+                      <div className="flex flex-wrap gap-2 pt-2">
+                        <button
+                          type="submit"
+                          className="neumorphic-btn-primary px-5 py-2 font-semibold text-sm"
+                        >
+                          Save changes
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setEditingId(null)}
+                          className="neumorphic-btn-ghost px-4 py-1.5 font-semibold text-sm"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
+                  );
+                }
+
+                return (
+                  <article
+                    key={task.id}
+                    className={`neumorphic-raised transition hover:translate-y-[-2px] focus-within:ring-2 focus-within:ring-[#5b5bf5]/40 focus-within:outline-none ${isOverdue ? "border-[#d3546f]" : "border-transparent"}`}
+                  >
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="checkbox"
+                        checked={task.completed}
+                        onChange={() => toggleTask(task.id)}
+                        aria-label={`Mark ${task.title} as completed`}
+                        className="mt-1 h-5 w-5 shrink-0 cursor-pointer accent-[#5b5bf5]"
+                      />
+
+                      <div className="min-w-0 flex-1">
+                        <p
+                          className={`break-words font-semibold ${task.completed ? "text-[#6c7a89] line-through" : "text-[#2d3436]"}`}
+                        >
+                          {task.title}
+                        </p>
+
+                        <div className="mt-2 flex flex-wrap items-center gap-2">
+                          <span className="neumorphic-chip px-2.5 py-1 text-xs font-bold text-[#6c7a89]">
+                            {task.subject}
+                          </span>
+
+                          <span
+                            className={`neumorphic-badge px-2.5 py-1 text-xs font-bold ring-1 ring-inset ${
+                              task.priority === "Low"
+                                ? "text-[#27ae60]"
+                                : task.priority === "Medium"
+                                  ? "text-[#d35400]"
+                                  : "text-[#c0392b]"
+                            }`}
+                          >
+                            {task.priority} priority
+                          </span>
+
+                          {task.deadline && (
+                            <span className="text-xs font-medium text-[#6c7a89]">
+                              {task.completed ? "Was due " : "Due "}
+                              {formatDeadline(task.deadline)}
+                            </span>
+                          )}
+
+                          {status === "overdue" && (
+                            <span className="neumorphic-badge px-2.5 py-1 text-xs font-bold text-[#c0392b]">
+                              Overdue
+                            </span>
+                          )}
+                          {status === "today" && (
+                            <span className="neumorphic-badge px-2.5 py-1 text-xs font-bold text-[#b8860b]">
+                              Due today
+                            </span>
+                          )}
+                          {status === "soon" && (
+                            <span className="neumorphic-badge px-2.5 py-1 text-xs font-bold text-[#d35400]">
+                              Due soon
+                            </span>
+                          )}
+
+                          {task.completed && (
+                            <span className="neumorphic-badge px-2.5 py-1 text-xs font-bold text-[#27ae60]">
+                              ✓ Completed
+                            </span>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="flex shrink-0 flex-col gap-1 sm:flex-row pt-1 sm:pt-0">
                       <button
                         type="button"
                         onClick={() => startEditing(task)}
                         aria-label={`Edit ${task.title}`}
-                        className="rounded-lg px-3 py-2 text-sm font-semibold text-[#6658f5] hover:bg-violet-50"
+                        className="neumorphic-btn-ghost px-3 py-1.5 text-sm font-semibold text-[#5b5bf5] underline underline-offset-4"
                       >
                         Edit
                       </button>
@@ -885,7 +947,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                         type="button"
                         onClick={() => deleteTask(task.id)}
                         aria-label={`Delete ${task.title}`}
-                        className="rounded-lg px-3 py-2 text-sm font-semibold text-[#777c91] hover:bg-rose-50 hover:text-rose-700"
+                        className="neumorphic-btn-ghost px-3 py-1.5 text-sm font-semibold text-[#c0392b] underline underline-offset-4"
                       >
                         Delete
                       </button>
@@ -896,9 +958,9 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
             })}
 
             {visibleTasks.length === 0 && (
-              <div className="rounded-xl border border-dashed border-[#d9dbea] px-4 py-12 text-center">
-                <p className="text-lg font-bold">No matching tasks</p>
-                <p className="mt-1 text-sm text-[#777c91]">
+              <div className="rounded-[2rem] neumorphic-inset p-8 text-center">
+                <p className="text-lg font-bold text-[#1e2224]">No matching tasks</p>
+                <p className="mt-1 text-sm text-[#6c7a89]">
                   Try a different search or filter, or add a new study task.
                 </p>
                 <button
@@ -908,7 +970,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
                     setFilter("All");
                     setSubjectFilter("All");
                   }}
-                  className="mt-4 rounded-lg bg-violet-600 px-4 py-2 text-sm font-semibold text-white hover:bg-violet-500"
+                  className="mt-4 neumorphic-btn-primary px-5 py-2 text-sm font-semibold"
                 >
                   Clear filters
                 </button>
@@ -918,7 +980,7 @@ async function saveEdit(event?: React.FormEvent<HTMLFormElement>) {
           )}
         </section>
 
-        <footer className="py-8 text-center text-sm text-[#777c91]">
+        <footer className="py-8 text-center text-sm text-[#6c7a89]">
           Built step by step · Student Study Planner
         </footer>
       </div>
@@ -936,25 +998,23 @@ function StatCard({
   detail: string;
 }) {
   return (
-    <div className="group relative overflow-hidden rounded-[1.5rem] border border-[#e8eaf2] bg-white p-5 shadow-[0_4px_20px_rgba(25,30,60,0.03)] transition-all duration-300 hover:-translate-y-1 hover:border-[#d8d2ff] hover:shadow-[0_14px_35px_rgba(80,65,180,0.09)] sm:p-6">
+    <div className="group relative overflow-hidden rounded-[2rem] neumorphic-card p-5 transition-all duration-300 hover:scale-[1.01] sm:p-6">
       <div className="flex items-start justify-between gap-3">
-        <p className="text-sm font-semibold tracking-wide text-[#777c91]">
+        <p className="text-sm font-semibold tracking-wide text-[#6c7a89]">
           {label}
         </p>
 
-        <span className="h-2.5 w-2.5 rounded-full bg-[#c8f169] ring-4 ring-[#c8f169]/20 transition-transform duration-300 group-hover:scale-125" />
+        <span className="h-2.5 w-2.5 rounded-full bg-[#5b5bf5] ring-4 ring-[#5b5bf5]/20 transition-transform duration-300 group-hover:scale-125" />
       </div>
 
-      <p className="mt-5 text-4xl font-black tracking-[-0.06em] text-[#171a2b] sm:text-[2.75rem]">
-        {value}
-      </p>
+      <p className="neumorphic-stat-value mt-5">{value}</p>
 
-      <p className="mt-2 text-xs font-medium leading-relaxed text-[#777c91]">
+      <p className="mt-2 text-xs font-medium leading-relaxed text-[#6c7a89]">
         {detail}
       </p>
 
-      <div className="mt-5 h-1 overflow-hidden rounded-full bg-[#f0efff]">
-        <div className="animate-progress-fill h-full w-1/3 rounded-full bg-[#6658f5]" />
+      <div className="mt-5 h-1 overflow-hidden rounded-full bg-[#d7dbe0] shadow-[inset_2px_2px_4px_rgba(0,0,0,0.08),inset_-2px_-2px_4px_rgba(255,255,255,0.7)]">
+        <div className="animate-progress-fill h-full w-1/3 rounded-full neumorphic-progress-bar" />
       </div>
     </div>
   );
@@ -991,39 +1051,50 @@ function WeeklyCalendar({
     <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
       {days.map(({ date, dateString }) => {
         const dayTasks = tasks.filter((task) => task.deadline === dateString);
+        const isToday = dateString === today;
 
         return (
           <section
             key={dateString}
-            className={`min-h-36 rounded-xl border p-3 ${
-              dateString === today
-                ? "border-violet-400/40 bg-violet-50"
-                : "border-[#e8eaf2] bg-white"
+            className={`neumorphic-raised min-h-[160px] p-3 transition hover:translate-y-[-2px] focus-within:ring-2 focus-within:ring-[#5b5bf5]/40 focus-within:outline-none ${
+              isToday ? "border-[#5b5bf5]" : "border-transparent"
             }`}
+            aria-label={date.toLocaleDateString(undefined, {
+              weekday: "long",
+              day: "numeric",
+              month: "long",
+            })}
           >
-            <h3 className="font-bold">
-              {date.toLocaleDateString(undefined, { weekday: "short" })}
-              <span className="ml-2 text-sm font-medium text-[#777c91]">
-                {date.toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+            <div className="flex items-start justify-between gap-2 mb-2">
+              <h3 className="text-sm font-semibold text-[#1e2224]">
+                {date.toLocaleDateString(undefined, { weekday: "short" })}
+              </h3>
+              <span className="text-[10px] font-medium text-[#6c7a89]">
+                {date.toLocaleDateString(undefined, {
+                  month: "short",
+                  day: "numeric",
+                })}
               </span>
-            </h3>
-            <div className="mt-2 space-y-2">
+            </div>
+            <div className="mt-1 space-y-2">
               {dayTasks.map((task) => (
                 <button
                   key={task.id}
                   type="button"
                   onClick={() => onEditTask(task)}
-                  className={`block w-full rounded-lg border border-[#e8eaf2] px-2.5 py-2 text-left text-xs hover:border-violet-400/40 ${
-                    task.completed ? "text-[#777c91] line-through" : "text-[#171a2b]"
-                  }`}
+                  className="neumorphic-inset rounded-lg px-2 py-2 text-left text-xs leading-tight transition group-hover:scale-[1.01]"
                   title="Edit task"
                 >
-                  <span className="block truncate font-semibold">{task.title}</span>
-                  <span className="mt-1 block truncate text-[#777c91]">{task.subject}</span>
+                  <span className="block truncate font-semibold text-[#1e2224]">
+                    {task.title}
+                  </span>
+                  <span className="mt-1 block truncate text-xs text-[#6c7a89]">
+                    {task.subject}
+                  </span>
                 </button>
               ))}
               {dayTasks.length === 0 && (
-                <p className="pt-2 text-xs text-[#969aab]">No tasks due</p>
+                <p className="pt-1 text-xs text-[#95a5a9]">No tasks due</p>
               )}
             </div>
           </section>
